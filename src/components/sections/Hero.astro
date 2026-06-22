@@ -16,24 +16,24 @@ import { SITE } from "../../lib/site";
 
 <section class="hero" data-hero aria-label="Introduction">
   <div class="hero__inner">
-    <p class="hero__name label" data-hero-name>{SITE.name}</p>
+    <p class="hero__name label" data-hero-name>{SITE.name} — Software & AI Engineer in Nairobi, Kenya</p>
 
     <h1 class="hero__statement serif" data-hero-statement>
       <span class="hero__line">
-        <span class="word">I</span> <span class="word">build</span>
-        <span class="word">enterprise</span> <span class="word">software</span>
-        <span class="word">and</span> <span class="word">AI</span>
-        <span class="word">agents</span> <span class="word">that</span>
-        <span class="word">give</span> <span class="word">growing</span>
+        <span class="word">I</span> <span class="word">design</span>
+        <span class="word">and</span>
+        <span class="word hero__build">
+          <InkStroke variant="circle" trigger="load" delay={4} around={true}>build</InkStroke>
+        </span>
+        <span class="word">enterprise</span> <span class="word">systems</span>
       </span>
       <span class="hero__line">
-        <span class="word">businesses</span> <span class="word">back</span>
-        <span class="word">the</span>
-        <span class="word hero__joy">
-          <InkStroke variant="circle" trigger="load" delay={4} around={true}>joy</InkStroke>
-        </span>
-        <span class="word">of</span> <span class="word">running</span>
-        <span class="word">them.</span>
+        <span class="word">and</span> <span class="word">AI</span>
+        <span class="word">agents</span> <span class="word">for</span>
+        <span class="word">growing</span> <span class="word">businesses</span>
+      </span>
+      <span class="hero__line">
+        <span class="word">across</span> <span class="word">East</span> <span class="word">Africa.</span>
       </span>
     </h1>
 
@@ -102,9 +102,9 @@ import { SITE } from "../../lib/site";
     white-space: normal;
   }
 
-  /* "joy" carries the only accent ink in the hero. */
-  .hero__joy { color: var(--ink-blue); }
-  .hero__joy :global(.ink-stroke) { padding-inline: 0.04em; }
+  /* "builder" carries the only accent ink in the hero. */
+  .hero__build { color: var(--ink-blue); }
+  .hero__build :global(.ink-stroke) { padding-inline: 0.04em; }
 
   /* word-level reveal targets. Promote to their own layer for
      composited (stutter-free) transform + opacity animation. */
