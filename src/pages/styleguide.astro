@@ -1,0 +1,228 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import InkStroke from "../components/InkStroke.astro";
+import Hairline from "../components/Hairline.astro";
+
+const swatches = [
+  { name: "Paper", var: "--paper", note: "#F6F2E9 · warm bone background" },
+  { name: "Paper sunk", var: "--paper-sunk", note: "insets / poster frames" },
+  { name: "Ink", var: "--ink", note: "#1A1814 · warm near-black text" },
+  { name: "Ink blue", var: "--ink-blue", note: "scarce accent · marks, hairlines" },
+  { name: "Grey", var: "--grey", note: "secondary · before · labels" },
+];
+
+const scale = [
+  { step: "--step-5", label: "Hero statement", text: "the joy of running them" },
+  { step: "--step-4", label: "Project title", text: "Wendo Coffee & Bistro" },
+  { step: "--step-3", label: "Section head", text: "What I do" },
+  { step: "--step-2", label: "Row outcome", text: "Run your whole operation from one place." },
+  { step: "--step-1", label: "Lead / sub", text: "I sit with business owners and watch how they work." },
+  { step: "--step-0", label: "Body", text: "The voice of someone who knows what they're doing." },
+  { step: "--step--1", label: "Caption / label", text: "Edwinfred Kamau. Nairobi, 2026." },
+];
+---
+
+<BaseLayout title="Styleguide — Visual System" chrome={false}>
+  <main class="sg">
+    <header class="sg__head container">
+      <p class="label">Quality Gate · #1</p>
+      <h1 class="serif sg__title">The visual system</h1>
+      <p class="prose sg__intro">
+        The whole system on one page — colour, type, the ink-blue hairline, and
+        the hand-drawn marks in motion. This is the bar we validate before any
+        section is built. <span class="accent">Calm is the rule; the marks are the
+        punctuation.</span>
+      </p>
+    </header>
+
+    <Hairline class="container sg__rule" />
+
+    <!-- COLOUR ------------------------------------------------ -->
+    <section class="sg__block container">
+      <p class="label">01 — Colour · four, we refuse a fifth</p>
+      <div class="sg__swatches">
+        {swatches.map((s) => (
+          <figure class="sw">
+            <div class="sw__chip" style={`background:var(${s.var})`}></div>
+            <figcaption>
+              <strong class="sans">{s.name}</strong>
+              <span class="muted">{s.note}</span>
+            </figcaption>
+          </figure>
+        ))}
+      </div>
+    </section>
+
+    <Hairline class="container sg__rule" />
+
+    <!-- TYPE SCALE -------------------------------------------- -->
+    <section class="sg__block container">
+      <p class="label">02 — Type · Fraunces (serif) × Inter Tight (sans)</p>
+      <div class="sg__scale">
+        {scale.map((row) => (
+          <div class="ts">
+            <span class="ts__meta label">{row.label}</span>
+            <p class="serif" style={`font-size:var(${row.step});line-height:var(--lh-tight)`}>
+              {row.text}
+            </p>
+          </div>
+        ))}
+      </div>
+
+      <div class="sg__pairing">
+        <div>
+          <p class="label">Serif · roman + italic</p>
+          <p class="serif" style="font-size:var(--step-3)">
+            Order, arriving <em class="serif-italic">out of nothing.</em>
+          </p>
+        </div>
+        <div>
+          <p class="label">Sans · functional voice</p>
+          <p class="sans" style="font-size:var(--step-1);max-width:34ch">
+            Clean, slightly mechanical — the tension against the serif's warmth
+            is the sophistication.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <Hairline class="container sg__rule" />
+
+    <!-- INK MARKS --------------------------------------------- -->
+    <section class="sg__block container">
+      <p class="label">03 — The hand-drawn ink gesture (replay to watch it draw)</p>
+      <p class="muted sg__note">
+        Real irregular hand-authored SVG paths — open ends, overshoot, off-square.
+        Never a CSS underline, never a geometric ellipse.
+      </p>
+
+      <div class="sg__marks" id="markStage">
+        <div class="mark">
+          <p class="serif" style="font-size:var(--step-4)">
+            the <InkStroke variant="circle" trigger="load" delay={0.4}>joy</InkStroke> of it
+          </p>
+          <span class="label">circle · hero</span>
+        </div>
+
+        <div class="mark">
+          <p class="serif" style="font-size:var(--step-3)">
+            <InkStroke variant="underline" trigger="load" delay={0.5}>I go to them</InkStroke>
+          </p>
+          <span class="label">underline 1</span>
+        </div>
+
+        <div class="mark">
+          <p class="serif" style="font-size:var(--step-3)">
+            <InkStroke variant="underline-2" trigger="load" delay={0.7}>a glance</InkStroke>
+          </p>
+          <span class="label">underline 2</span>
+        </div>
+
+        <div class="mark">
+          <p class="serif" style="font-size:var(--step-3)">
+            <InkStroke variant="underline-3" trigger="load" delay={0.9}>hello@edwinfred</InkStroke>
+          </p>
+          <span class="label">underline 3</span>
+        </div>
+      </div>
+
+      <button class="sg__replay" id="replayMarks" type="button">↻ Replay marks</button>
+    </section>
+
+    <Hairline class="container sg__rule" />
+
+    <!-- HAIRLINE / MOTION ------------------------------------- -->
+    <section class="sg__block container">
+      <p class="label">04 — Hairline · the grid made visible</p>
+      <p class="muted sg__note">Scroll-triggered version draws left-to-right (mechanical-straight ease).</p>
+      <div class="sg__hairs">
+        <Hairline />
+        <Hairline draw={true} />
+      </div>
+    </section>
+
+    <footer class="sg__foot container">
+      <p class="label">End of system · next: Hero (Quality Gate #2)</p>
+    </footer>
+  </main>
+</BaseLayout>
+
+<style>
+  .sg { padding-block: var(--space-2xl) var(--space-3xl); }
+  .sg__head { max-width: 64rem; }
+  .sg__title { font-size: var(--step-4); margin-block: var(--space-xs) var(--space-m); }
+  .sg__intro { font-size: var(--step-1); }
+  .sg__rule { margin-block: var(--space-2xl); }
+  .sg__block { display: block; }
+  .sg__block > .label { margin-bottom: var(--space-l); }
+  .sg__note { margin-top: -1.5rem; margin-bottom: var(--space-l); max-width: 52ch; }
+
+  /* swatches */
+  .sg__swatches {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: var(--space-m);
+  }
+  .sw__chip {
+    aspect-ratio: 3 / 2;
+    border-radius: 4px;
+    border: 1px solid var(--hairline);
+  }
+  .sw figcaption { margin-top: var(--space-2xs); display: flex; flex-direction: column; gap: 2px; }
+  .sw figcaption .muted { font-size: var(--step--1); }
+
+  /* type scale */
+  .sg__scale { display: flex; flex-direction: column; gap: var(--space-l); }
+  .ts { display: grid; grid-template-columns: 14ch 1fr; gap: var(--space-m); align-items: baseline; }
+  .ts__meta { padding-top: 0.4em; }
+  @media (max-width: 640px) {
+    .ts { grid-template-columns: 1fr; gap: var(--space-2xs); }
+  }
+  .sg__pairing {
+    margin-top: var(--space-2xl);
+    display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-xl);
+  }
+  .sg__pairing .label { margin-bottom: var(--space-s); }
+  @media (max-width: 720px) { .sg__pairing { grid-template-columns: 1fr; gap: var(--space-l); } }
+
+  /* marks */
+  .sg__marks {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: var(--space-2xl) var(--space-xl);
+    align-items: end;
+    padding-block: var(--space-l);
+  }
+  .mark { display: flex; flex-direction: column; gap: var(--space-m); }
+  .mark .label { color: var(--grey-soft); }
+  .sg__replay, .sg__hairs { margin-top: var(--space-l); }
+  .sg__replay {
+    background: none; border: 1px solid var(--hairline); color: var(--ink);
+    padding: 0.6em 1.2em; border-radius: 999px; cursor: pointer;
+    font-size: var(--step--1); letter-spacing: 0.04em;
+    transition: border-color var(--dur-fast) var(--ease-physical),
+                background var(--dur-fast) var(--ease-physical);
+  }
+  .sg__replay:hover { border-color: var(--ink-blue); background: var(--paper-sunk); }
+
+  .sg__hairs { display: flex; flex-direction: column; gap: var(--space-xl); }
+  .sg__foot { margin-top: var(--space-3xl); }
+</style>
+
+<script>
+  // Replay: strip [data-drawn] + [data-init] and re-init so marks redraw.
+  function wireReplay() {
+    const btn = document.getElementById("replayMarks");
+    const stage = document.getElementById("markStage");
+    if (!btn || !stage) return;
+    btn.addEventListener("click", () => {
+      stage.querySelectorAll<HTMLElement>(".ink-stroke").forEach((el, i) => {
+        el.removeAttribute("data-drawn");
+        // small stagger on replay
+        window.setTimeout(() => el.setAttribute("data-drawn", ""), 200 + i * 200);
+      });
+    });
+  }
+  wireReplay();
+  document.addEventListener("astro:page-load", wireReplay);
+</script>

@@ -1,0 +1,68 @@
+---
+/**
+ * Blog — CALM (the reading room, homepage teaser).
+ *
+ * Reveals how he thinks — the thing a site can't claim but can show. A clean
+ * folio-numbered index (no cards), framed as a deliberate ongoing series so
+ * even the first posts read as "the first of something." Links through to the
+ * full reading room at /blog.
+ */
+import BlogEntries from "../BlogEntries.astro";
+import { posts, SERIES } from "../../lib/posts";
+---
+
+<section id="blog" class="blog section" aria-labelledby="blog-h">
+  <div class="blog__inner container">
+    <header class="blog__head">
+      <p class="blog__eyebrow label">Blog</p>
+      <h2 id="blog-h" class="blog__title serif">{SERIES}.</h2>
+      <p class="blog__intro">
+        What I've learned about building good systems — and the mistakes I made
+        getting there.
+      </p>
+    </header>
+
+    <BlogEntries posts={posts} />
+
+    <a class="blog__all" href="/blog">
+      Read the writing
+      <span class="blog__all-arrow" aria-hidden="true">→</span>
+    </a>
+  </div>
+</section>
+
+<style>
+  .blog__head { margin-bottom: var(--space-l); }
+  .blog__eyebrow { margin-bottom: var(--space-m); }
+  .blog__title {
+    font-size: var(--step-3);
+    line-height: var(--lh-head);
+    letter-spacing: -0.015em;
+    font-weight: 360;
+    text-wrap: balance;
+    max-width: 22ch;
+    margin: 0 0 var(--space-s);
+  }
+  .blog__intro {
+    margin: 0;
+    color: var(--grey);
+    font-size: var(--step-1);
+    line-height: 1.4;
+    max-width: 54ch;
+  }
+
+  .blog__all {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5em;
+    margin-top: var(--space-xl);
+    font-size: var(--step-0);
+    border-bottom: 1px solid var(--ink);
+    padding-bottom: 2px;
+    transition: color var(--dur-fast) var(--ease-physical),
+                border-color var(--dur-fast) var(--ease-physical);
+  }
+  .blog__all-arrow { transition: transform var(--dur-mid) var(--ease-physical); }
+  .blog__all:hover { color: var(--ink-blue); border-color: var(--ink-blue); }
+  .blog__all:hover .blog__all-arrow { transform: translateX(6px); }
+</style>

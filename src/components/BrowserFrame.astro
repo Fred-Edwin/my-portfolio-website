@@ -1,0 +1,83 @@
+---
+/**
+ * BrowserFrame — wraps a website/app screenshot in a minimal browser chrome
+ * (three dots + a faux address pill). Warm palette, soft shadow — one system
+ * with the rest of the media on the site.
+ */
+import { Image } from "astro:assets";
+
+interface Props {
+  src: ImageMetadata;
+  alt: string;
+  url?: string;
+  widths?: number[];
+  sizes?: string;
+  class?: string;
+}
+const {
+  src,
+  alt,
+  url,
+  widths = [480, 768, 1200, 1600],
+  sizes = "100vw",
+  class: className = "",
+} = Astro.props;
+---
+
+<figure class:list={["bframe", className]}>
+  <div class="bframe__bar">
+    <span class="bframe__dots" aria-hidden="true"><i></i><i></i><i></i></span>
+    {url && <span class="bframe__url">{url}</span>}
+  </div>
+  <Image
+    class="bframe__img"
+    src={src}
+    alt={alt}
+    widths={widths}
+    sizes={sizes}
+    formats={["avif", "webp"]}
+    quality={70}
+    loading="lazy"
+  />
+</figure>
+
+<style>
+  .bframe {
+    margin: 0;
+    border: 1px solid var(--hairline);
+    border-radius: 10px;
+    overflow: hidden;
+    background: var(--paper);
+    box-shadow: var(--shadow-media);
+  }
+  .bframe__bar {
+    display: flex;
+    align-items: center;
+    gap: 0.85rem;
+    height: 2.1rem;
+    padding-inline: 0.9rem;
+    background: var(--paper-sunk);
+    border-bottom: 1px solid var(--hairline);
+  }
+  .bframe__dots { display: inline-flex; gap: 0.4rem; flex: none; }
+  .bframe__dots i {
+    width: 0.5rem;
+    height: 0.5rem;
+    border-radius: 50%;
+    background: color-mix(in srgb, var(--ink) 16%, transparent);
+  }
+  .bframe__url {
+    font-family: var(--font-sans);
+    font-size: var(--step--1);
+    color: var(--grey);
+    letter-spacing: 0.01em;
+    background: var(--paper);
+    padding: 0.12rem 0.75rem;
+    border-radius: 999px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 70%;
+  }
+  .bframe__img { display: block; width: 100%; height: auto; }
+</style>

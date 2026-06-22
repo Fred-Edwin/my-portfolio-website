@@ -1,0 +1,32 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import Hero from "../components/sections/Hero.astro";
+import About from "../components/sections/About.astro";
+import Services from "../components/sections/Services.astro";
+import Work from "../components/sections/Work.astro";
+import Blog from "../components/sections/Blog.astro";
+import Contact from "../components/sections/Contact.astro";
+import Hairline from "../components/Hairline.astro";
+
+// Heartbeat: Hero → About → Services → Work → Blog → Contact.
+// (Lobster Technologies is deferred — to be designed in a later pass.)
+---
+
+<BaseLayout>
+  <Hero />
+
+  <Hairline class="container" />
+  <About />
+
+  <Hairline class="container" />
+  <Services />
+
+  <Hairline class="container" />
+  <Work />
+
+  <Hairline class="container" />
+  <Blog />
+
+  <Hairline class="container" />
+  <Contact />
+</BaseLayout>

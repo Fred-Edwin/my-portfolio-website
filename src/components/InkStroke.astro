@@ -1,0 +1,191 @@
+---
+/**
+ * InkStroke — the recurring hand-drawn signature.
+ *
+ * Real irregular hand-authored SVG paths (wobble, overshoot, open ends) —
+ * NOT a CSS underline, NOT a geometric ellipse. Animated on via
+ * stroke-dashoffset at hand-speed easing.
+ *
+ * variant : "circle" | "underline" | "underline-2" | "underline-3"
+ *           (multiple underlines so repeated marks never look identical —
+ *            the "human hand" rule).
+ * trigger : "load"  — draws shortly after load (hero circle, contact email)
+ *           "scroll"— draws when it scrolls into view (work, blog)
+ *           "static"— present, already drawn, never animates (About)
+ * around  : when set, the stroke absolutely positions itself around the
+ *           wrapped text (use for circling/underlining inline words).
+ */
+interface Props {
+  variant?: "circle" | "underline" | "underline-2" | "underline-3";
+  trigger?: "load" | "scroll" | "static";
+  around?: boolean;
+  delay?: number;        // seconds, for load trigger
+  class?: string;
+  color?: string;        // defaults to ink-blue
+}
+
+const {
+  variant = "underline",
+  trigger = "scroll",
+  around = false,
+  delay = 0,
+  class: className = "",
+  color = "var(--ink-blue)",
+} = Astro.props;
+
+/* Hand-authored path data. Each carries deliberate irregularity:
+   open ends, slight overshoot, a non-uniform baseline. viewBox is
+   sized to the gesture; the SVG is stretched over the target word. */
+const PATHS = {
+  // A loose loop that overshoots and does not quite close (Sequoia-ish,
+  // but looser and ink-blue). Starts low-left, sweeps round, crosses past start.
+  circle:
+    "M148 30 C96 18 38 24 20 47 C4 67 22 92 70 100 C128 110 196 100 205 70 C212 47 178 31 120 28 C92 27 66 31 50 40",
+  // Underline 1 — gentle rise then dip, ends with a small upward flick.
+  underline:
+    "M6 18 C70 9 150 7 232 12 C268 14 300 13 318 9",
+  // Underline 2 — slightly steeper wobble, thicker midsection feel.
+  "underline-2":
+    "M8 14 C64 20 140 6 210 14 C252 18 296 12 316 16",
+  // Underline 3 — near-flat with a late lift, almost a casual swipe.
+  "underline-3":
+    "M5 16 C90 11 160 18 236 10 C272 7 300 11 320 8",
+} as const;
+
+const VIEWBOX = {
+  circle: "0 0 224 128",
+  underline: "0 0 324 24",
+  "underline-2": "0 0 324 24",
+  "underline-3": "0 0 324 24",
+} as const;
+
+const d = PATHS[variant];
+const viewBox = VIEWBOX[variant];
+const isCircle = variant === "circle";
+---
+
+<span
+  class:list={["ink-stroke", `ink-stroke--${isCircle ? "circle" : "underline"}`, around && "ink-stroke--around", className]}
+  data-ink-trigger={trigger}
+  data-ink-delay={delay}
+>
+  <slot />
+  <svg
+    class="ink-stroke__svg"
+    viewBox={viewBox}
+    fill="none"
+    aria-hidden="true"
+    preserveAspectRatio="none"
+  >
+    <path
+      class="ink-stroke__path"
+      d={d}
+      stroke={color}
+      stroke-width={isCircle ? 3 : 4}
+      stroke-linecap="round"
+      stroke-linejoin="round"
+      vector-effect="non-scaling-stroke"
+    />
+  </svg>
+</span>
+
+<style>
+  .ink-stroke {
+    position: relative;
+    display: inline-block;
+    white-space: nowrap;
+  }
+
+  .ink-stroke__svg {
+    position: absolute;
+    overflow: visible;
+    pointer-events: none;
+    /* slight hand-set rotation so it never sits perfectly square */
+    transform: rotate(-0.6deg);
+  }
+
+  /* Underline sits just under the word, a touch wider than it. */
+  .ink-stroke--underline .ink-stroke__svg {
+    left: -2%;
+    bottom: -0.18em;
+    width: 104%;
+    height: 0.5em;
+  }
+
+  /* Circle wraps generously around the word. */
+  .ink-stroke--circle .ink-stroke__svg {
+    left: -12%;
+    top: -28%;
+    width: 124%;
+    height: 156%;
+    transform: rotate(-1.2deg);
+  }
+
+  /* Draw-on mechanics: dash the whole path, offset it fully, then
+     animate offset to 0. JS sets the exact length per instance and
+     toggles [data-drawn] to run the transition. */
+  .ink-stroke__path {
+    stroke-dasharray: var(--len, 1000);
+    stroke-dashoffset: var(--len, 1000);
+    transition: stroke-dashoffset var(--draw-dur, var(--dur-slow)) var(--ease-hand);
+  }
+
+  /* Static + drawn states both end at 0 offset. */
+  .ink-stroke[data-ink-trigger="static"] .ink-stroke__path,
+  .ink-stroke[data-drawn] .ink-stroke__path {
+    stroke-dashoffset: 0;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .ink-stroke__path { transition: none; stroke-dashoffset: 0; }
+  }
+</style>
+
+<script>
+  // Measure each path, set its real length as --len, and trigger the draw.
+  function initInkStrokes() {
+    const strokes = document.querySelectorAll<HTMLElement>(
+      ".ink-stroke:not([data-init])"
+    );
+    strokes.forEach((el) => {
+      el.setAttribute("data-init", "");
+      const path = el.querySelector<SVGPathElement>(".ink-stroke__path");
+      if (!path) return;
+      const len = Math.ceil(path.getTotalLength());
+      path.style.setProperty("--len", String(len));
+      // tune draw duration to length so speed feels constant (hand-speed)
+      const dur = Math.min(1.6, Math.max(0.7, len / 320));
+      path.style.setProperty("--draw-dur", `${dur}s`);
+
+      const trigger = el.dataset.inkTrigger;
+      const delay = parseFloat(el.dataset.inkDelay || "0");
+
+      if (trigger === "static") return; // CSS already shows it
+
+      if (trigger === "load") {
+        window.setTimeout(() => el.setAttribute("data-drawn", ""), delay * 1000);
+        return;
+      }
+
+      // scroll
+      const io = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((entry) => {
+            if (entry.isIntersecting) {
+              window.setTimeout(
+                () => el.setAttribute("data-drawn", ""),
+                delay * 1000
+              );
+              io.unobserve(entry.target);
+            }
+          });
+        },
+        { threshold: 0.9, rootMargin: "0px 0px -8% 0px" }
+      );
+      io.observe(el);
+    });
+  }
+
+  initInkStrokes();
+  document.addEventListener("astro:page-load", initInkStrokes);
+</script>

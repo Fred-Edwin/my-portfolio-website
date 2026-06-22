@@ -1,0 +1,95 @@
+---
+/**
+ * Nav — quiet, top-left wordmark + restrained links. Calm by default;
+ * a thin hairline appears under it once you scroll off the hero.
+ */
+const links = [
+  { label: "Work", href: "/#work" },
+  { label: "About", href: "/#about" },
+  { label: "Blog", href: "/blog" },
+  { label: "Contact", href: "/#contact" },
+];
+---
+
+<header class="nav" data-nav>
+  <div class="nav__inner container">
+    <a class="nav__mark" href="/" aria-label="Edwinfred Kamau — home">
+      <span class="serif">Edwinfred Kamau</span>
+    </a>
+    <nav class="nav__links" aria-label="Primary">
+      {links.map((l) => (
+        <a class="nav__link label" href={l.href}>{l.label}</a>
+      ))}
+    </nav>
+  </div>
+</header>
+
+<style>
+  .nav {
+    position: sticky;
+    top: 0;
+    z-index: var(--z-nav);
+    background: color-mix(in srgb, var(--paper) 82%, transparent);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    border-bottom: 1px solid transparent;
+    transition: border-color var(--dur-mid) var(--ease-physical);
+  }
+  .nav[data-scrolled] { border-bottom-color: var(--hairline); }
+
+  .nav__inner {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: var(--space-m);
+    padding-block: var(--space-s);
+  }
+  .nav__mark .serif {
+    font-size: var(--step-0);
+    letter-spacing: 0;
+    font-weight: 420;
+  }
+  .nav__links {
+    display: flex;
+    gap: var(--space-l);
+  }
+  .nav__link {
+    position: relative;
+    color: var(--ink);
+    transition: color var(--dur-fast) var(--ease-physical);
+  }
+  .nav__link::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    bottom: -4px;
+    width: 100%;
+    height: 1px;
+    background: var(--ink-blue);
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform var(--dur-fast) var(--ease-physical);
+  }
+  .nav__link:hover { color: var(--ink-blue); }
+  .nav__link:hover::after { transform: scaleX(1); }
+
+  @media (max-width: 540px) {
+    .nav__links { gap: var(--space-m); }
+    .nav__link:nth-child(2) { display: none; } /* drop "About" first on tiny screens */
+  }
+</style>
+
+<script>
+  function wireNav() {
+    const nav = document.querySelector<HTMLElement>("[data-nav]");
+    if (!nav) return;
+    const onScroll = () => {
+      if (window.scrollY > 24) nav.setAttribute("data-scrolled", "");
+      else nav.removeAttribute("data-scrolled");
+    };
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+  }
+  wireNav();
+  document.addEventListener("astro:page-load", wireNav);
+</script>

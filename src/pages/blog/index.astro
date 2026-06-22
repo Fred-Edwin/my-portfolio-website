@@ -1,0 +1,51 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import BlogEntries from "../../components/BlogEntries.astro";
+import Hairline from "../../components/Hairline.astro";
+import { posts, SERIES } from "../../lib/posts";
+import { SITE } from "../../lib/site";
+---
+
+<BaseLayout
+  title={`Writing — ${SITE.name}`}
+  description="Field notes on building systems — lessons and mistakes from the software Edwinfred Kamau has shipped."
+>
+  <section class="blogindex section" aria-labelledby="blogindex-h">
+    <div class="blogindex__inner container">
+      <header class="blogindex__head">
+        <p class="label">Writing</p>
+        <h1 id="blogindex-h" class="blogindex__title serif">{SERIES}.</h1>
+        <p class="blogindex__intro">
+          What I've learned about building good systems — and the mistakes I
+          made getting there. One genuinely useful post beats ten polished
+          ones, so these arrive when there's something true to say.
+        </p>
+      </header>
+
+      <BlogEntries posts={posts} />
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .blogindex { padding-top: var(--space-2xl); }
+  .blogindex__head { margin-bottom: var(--space-l); }
+  .blogindex__head .label { margin-bottom: var(--space-m); }
+  .blogindex__title {
+    font-size: var(--step-4);
+    line-height: 1.04;
+    letter-spacing: -0.02em;
+    font-weight: 340;
+    text-wrap: balance;
+    /* wide enough to read as two confident lines, not a tall stack */
+    max-width: 18ch;
+    margin: 0 0 var(--space-m);
+  }
+  .blogindex__intro {
+    margin: 0;
+    color: var(--grey);
+    font-size: var(--step-1);
+    line-height: 1.45;
+    max-width: 62ch;
+  }
+</style>

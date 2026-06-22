@@ -1,0 +1,60 @@
+---
+/**
+ * Footer — minimal. Name, year, one-line repeat of what he does, socials.
+ * Phone lives here only (discreet), per the "controlled first contact"
+ * decision; email + LinkedIn remain the front door in Contact.
+ */
+import { SITE } from "../lib/site";
+import Hairline from "./Hairline.astro";
+const year = new Date().getFullYear();
+---
+
+<footer class="footer">
+  <Hairline class="container" />
+  <div class="footer__inner container">
+    <div class="footer__brand">
+      <p class="serif footer__name">{SITE.name}</p>
+      <p class="muted footer__role">{SITE.role} · {SITE.location}</p>
+    </div>
+
+    <nav class="footer__links label" aria-label="Elsewhere">
+      <a href={SITE.linkedin} target="_blank" rel="me noopener">LinkedIn</a>
+      <a href={SITE.x} target="_blank" rel="me noopener">X</a>
+      <a href={SITE.github} target="_blank" rel="me noopener">GitHub</a>
+      <a href={`mailto:${SITE.email}`}>Email</a>
+    </nav>
+
+    <p class="footer__meta label">© {year} {SITE.name}</p>
+  </div>
+</footer>
+
+<style>
+  .footer { padding-bottom: var(--space-xl); }
+  .footer__inner {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: var(--space-l) var(--space-xl);
+    align-items: end;
+    padding-top: var(--space-xl);
+  }
+  .footer__name { font-size: var(--step-1); }
+  .footer__role { font-size: var(--step--1); margin-top: 0.2em; }
+  .footer__links {
+    display: flex;
+    gap: var(--space-m);
+    grid-column: 1 / -1;
+    order: 3;
+  }
+  .footer__links a {
+    color: var(--grey);
+    transition: color var(--dur-fast) var(--ease-physical);
+  }
+  .footer__links a:hover { color: var(--ink-blue); }
+  .footer__meta { grid-column: 2; grid-row: 1; text-align: right; align-self: start; }
+
+  @media (max-width: 600px) {
+    .footer__inner { grid-template-columns: 1fr; }
+    .footer__meta { grid-column: 1; grid-row: auto; text-align: left; order: 4; }
+    .footer__links { flex-wrap: wrap; }
+  }
+</style>

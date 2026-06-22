@@ -1,0 +1,56 @@
+---
+/**
+ * PhoneFrame — wraps a mobile app screenshot in a clean dark device bezel.
+ * Used for the flagship product shots (Wendo order screen, Washan dashboard).
+ */
+import { Image } from "astro:assets";
+
+interface Props {
+  src: ImageMetadata;
+  alt: string;
+  widths?: number[];
+  sizes?: string;
+  class?: string;
+}
+const {
+  src,
+  alt,
+  widths = [280, 420, 560],
+  sizes = "40vw",
+  class: className = "",
+} = Astro.props;
+---
+
+<figure class:list={["phone", className]}>
+  <Image
+    class="phone__img"
+    src={src}
+    alt={alt}
+    widths={widths}
+    sizes={sizes}
+    formats={["avif", "webp"]}
+    quality={74}
+    loading="lazy"
+  />
+</figure>
+
+<style>
+  .phone {
+    position: relative;
+    margin: 0;
+    padding: 0.42rem;
+    background: linear-gradient(150deg, #2a2722, var(--ink));
+    border-radius: 1.9rem;
+    box-shadow: var(--shadow-media);
+    /* thin outer rim + faint top highlight for a machined-metal feel */
+    border: 1px solid color-mix(in srgb, var(--paper) 14%, var(--ink));
+    outline: 1px solid color-mix(in srgb, var(--ink) 35%, transparent);
+    outline-offset: -0.42rem;
+  }
+  .phone__img {
+    display: block;
+    width: 100%;
+    height: auto;
+    border-radius: 1.5rem;
+  }
+</style>

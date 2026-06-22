@@ -1,0 +1,279 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import InkStroke from "../../components/InkStroke.astro";
+import { posts, getPost, SERIES } from "../../lib/posts";
+import { SITE } from "../../lib/site";
+
+export function getStaticPaths() {
+  return posts.map((p) => ({ params: { slug: p.slug } }));
+}
+
+const { slug } = Astro.params;
+const post = getPost(slug!)!;
+
+// Series navigation — prev/next by order in the series.
+const idx = posts.findIndex((p) => p.slug === slug);
+const prev = idx > 0 ? posts[idx - 1] : null;
+const next = idx < posts.length - 1 ? posts[idx + 1] : null;
+---
+
+<BaseLayout title={`${post.title} — ${SITE.name}`} description={post.summary}>
+  <!-- reading-progress line — thin ink-blue, fills as you scroll -->
+  <div class="post__progress" aria-hidden="true">
+    <span class="post__progress-fill" data-progress></span>
+  </div>
+
+  <article class="post section">
+    <div class="post__col container">
+      <a class="post__back label" href="/blog">
+        <span aria-hidden="true">←</span> Writing
+      </a>
+
+      <aside class="post__meta" aria-label="Article details">
+        <span class="post__folio">
+          <span class="post__folio-no label">No.</span>
+          <span class="post__folio-num serif">{post.no}</span>
+        </span>
+        <span class="post__meta-item label">{post.date}</span>
+        <span class="post__meta-item label">{post.readMins} min read</span>
+        <span class="post__meta-item label post__meta-tag">{post.tag}</span>
+      </aside>
+
+      <!-- Masthead — spans wider than the reading body for presence. -->
+      <header class="post__header">
+        <p class="post__series label">{SERIES}</p>
+        <h1 class="post__title serif">{post.title}</h1>
+      </header>
+
+      <div class="post__body">
+        <p class="post__lead" data-dropcap>{post.lead}</p>
+
+        {post.body.map((para) => <p>{para}</p>)}
+
+        <blockquote class="post__quote serif">
+          {post.quote.lead}<InkStroke variant="underline" trigger="scroll">{post.quote.word}</InkStroke>{post.quote.trail}
+        </blockquote>
+
+        {post.bodyAfter.map((para) => <p>{para}</p>)}
+      </div>
+
+      <footer class="post__footer">
+        {(prev || next) && (
+          <nav class="post__series-nav" aria-label="More in this series">
+            {prev ? (
+              <a class="post__nav post__nav--prev" href={`/blog/${prev.slug}`}>
+                <span class="post__nav-dir label"><span aria-hidden="true">←</span> Previous</span>
+                <span class="post__nav-title serif">{prev.title}</span>
+              </a>
+            ) : <span />}
+            {next && (
+              <a class="post__nav post__nav--next" href={`/blog/${next.slug}`}>
+                <span class="post__nav-dir label">Next <span aria-hidden="true">→</span></span>
+                <span class="post__nav-title serif">{next.title}</span>
+              </a>
+            )}
+          </nav>
+        )}
+        <a class="post__back post__back--foot label" href="/blog">
+          <span aria-hidden="true">←</span> All writing
+        </a>
+      </footer>
+    </div>
+  </article>
+</BaseLayout>
+
+<style>
+  /* reading-progress line */
+  .post__progress {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 2px;
+    z-index: var(--z-nav);
+    background: transparent;
+    pointer-events: none;
+  }
+  .post__progress-fill {
+    display: block;
+    height: 100%;
+    width: 100%;
+    background: var(--ink-blue);
+    transform: scaleX(0);
+    transform-origin: left center;
+  }
+
+  .post { padding-top: var(--space-xl); }
+
+  /* The column is centred on the page. The masthead + footer fill its full
+     width; the reading body is capped to the measure and centred within the
+     column — wide title above, balanced reading column below. */
+  .post__col {
+    --measure-read: 70ch;
+    max-width: min(100%, 52rem);
+    margin-inline: auto;
+    position: relative;
+  }
+
+  .post__back {
+    display: inline-block;
+    color: var(--grey);
+    margin-bottom: var(--space-2xl);
+    transition: color var(--dur-fast) var(--ease-physical);
+  }
+  .post__back:hover { color: var(--ink-blue); }
+
+  /* Margin notes — folio + date / reading time / topic. Mobile: a quiet row
+     above the title. Wide: floated into the left margin. */
+  .post__meta {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: var(--space-m);
+    margin-bottom: var(--space-l);
+  }
+  .post__folio { display: inline-flex; align-items: baseline; gap: 0.35em; }
+  .post__folio-no { color: var(--grey-soft); }
+  .post__folio-num {
+    font-size: var(--step-2);
+    font-weight: 460;
+    color: var(--ink-blue);
+    line-height: 1;
+    font-variant-numeric: lining-nums tabular-nums;
+  }
+  .post__meta-tag { color: var(--ink-blue); }
+
+  .post__header { margin-bottom: var(--space-xl); }
+  .post__series { color: var(--grey-soft); margin-bottom: var(--space-s); }
+  .post__title {
+    /* sized to read as 2–3 lines across the wider masthead */
+    font-size: clamp(1.5rem, 1.3rem + 0.9vw, 2.12rem);
+    line-height: 1.06;
+    letter-spacing: -0.02em;
+    font-weight: 340;
+    margin: 0;
+    text-wrap: balance;
+  }
+
+  /* Reading prose — serif, generous line-height, capped to the measure. */
+  .post__body {
+    max-width: var(--measure-read);
+    margin-inline: auto;
+    font-family: var(--font-serif);
+    font-optical-sizing: auto;
+    font-variation-settings: "SOFT" var(--serif-soft), "WONK" 0;
+    font-weight: 360;
+    font-size: clamp(0.98rem, 0.94rem + 0.16vw, 1.05rem);
+    line-height: 1.62;
+    letter-spacing: -0.005em;
+    color: var(--ink);
+  }
+  .post__body p { margin: 0 0 1.1em; }
+
+  /* Drop cap — large Fraunces initial (ties to About + the house style). */
+  .post__lead[data-dropcap]::first-letter {
+    font-family: var(--font-serif);
+    font-weight: 460;
+    float: left;
+    font-size: 3.4em;
+    line-height: 0.74;
+    padding-right: 0.09em;
+    padding-top: 0.02em;
+    color: var(--ink);
+  }
+
+  /* Pull-quote — serif, lifted with ink-blue hairlines above and below.
+     One word carries the hand-drawn underline (draws on scroll). */
+  .post__quote {
+    max-width: var(--measure-read);
+    margin-inline: auto;
+    margin-block: var(--space-2xl);
+    padding: var(--space-l) 0;
+    border-top: 1px solid var(--hairline);
+    border-bottom: 1px solid var(--hairline);
+    font-style: italic;
+    font-weight: 360;
+    font-size: clamp(1.15rem, 1.0rem + 0.4vw, 1.32rem);
+    line-height: 1.26;
+    letter-spacing: -0.01em;
+    text-wrap: balance;
+    color: var(--ink);
+  }
+  .post__quote :global(.ink-stroke) { white-space: nowrap; }
+
+  /* Footer — series prev/next + a quiet return link. */
+  .post__footer {
+    margin-top: var(--space-3xl);
+    padding-top: var(--space-l);
+    border-top: 1px solid var(--hairline);
+  }
+  .post__series-nav {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--space-l);
+    margin-bottom: var(--space-xl);
+  }
+  .post__nav {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2xs);
+    color: inherit;
+    transition: transform var(--dur-fast) var(--ease-physical);
+  }
+  .post__nav-dir { color: var(--grey); }
+  .post__nav-title {
+    font-size: var(--step-1);
+    font-weight: 360;
+    line-height: 1.15;
+    max-width: 28ch;
+    transition: color var(--dur-fast) var(--ease-physical);
+  }
+  .post__nav:hover .post__nav-title { color: var(--ink-blue); }
+  .post__nav--prev:hover { transform: translateX(-3px); }
+  .post__nav--next:hover { transform: translateX(3px); }
+  .post__back--foot { margin-bottom: 0; }
+
+  @media (min-width: 620px) {
+    .post__series-nav { grid-template-columns: 1fr 1fr; gap: var(--space-xl); }
+    .post__nav--next { text-align: right; align-items: flex-end; }
+    .post__nav--next .post__nav-title { max-width: 24ch; }
+  }
+
+  /* Wide: float the margin notes (folio + meta) into the left margin,
+     aligned beside the title — the fine-publication look. */
+  @media (min-width: 1240px) {
+    .post__meta {
+      position: absolute;
+      left: 0;
+      top: 4.3rem; /* aligns beside the title block */
+      transform: translateX(-100%);
+      padding-right: var(--space-xl);
+      flex-direction: column;
+      align-items: flex-end;
+      gap: var(--space-s);
+      text-align: right;
+      width: max-content;
+      margin: 0;
+    }
+    .post__folio { margin-bottom: var(--space-2xs); }
+  }
+</style>
+
+<script>
+  // Fill the reading-progress line as the article scrolls.
+  function initProgress() {
+    const fill = document.querySelector<HTMLElement>("[data-progress]");
+    if (!fill) return;
+    const update = () => {
+      const doc = document.documentElement;
+      const max = doc.scrollHeight - doc.clientHeight;
+      const p = max > 0 ? Math.min(1, doc.scrollTop / max) : 0;
+      fill.style.transform = `scaleX(${p})`;
+    };
+    update();
+    window.addEventListener("scroll", update, { passive: true });
+    window.addEventListener("resize", update, { passive: true });
+  }
+  initProgress();
+  document.addEventListener("astro:page-load", initProgress);
+</script>

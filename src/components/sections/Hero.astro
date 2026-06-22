@@ -1,0 +1,244 @@
+---
+/**
+ * Hero — WOW. The one bold idea as a single sequence:
+ *   hold on empty paper → statement assembles line-by-line (heavy ease)
+ *   → held beat → ink circle draws itself around "joy".
+ *
+ * Type is the payload; no imagery. Left-aligned, asymmetric.
+ * Line breaks are hand-set per breakpoint via the .br helpers.
+ */
+import InkStroke from "../InkStroke.astro";
+import { SITE } from "../../lib/site";
+
+// Hand-set words. Each <span class="word"> is animated in sequence.
+// The statement is authored as lines so we control breaks precisely.
+---
+
+<section class="hero" data-hero aria-label="Introduction">
+  <div class="hero__inner">
+    <p class="hero__name label" data-hero-name>{SITE.name}</p>
+
+    <h1 class="hero__statement serif" data-hero-statement>
+      <span class="hero__line">
+        <span class="word">I</span> <span class="word">build</span>
+        <span class="word">enterprise</span> <span class="word">software</span>
+        <span class="word">and</span> <span class="word">AI</span>
+        <span class="word">agents</span> <span class="word">that</span>
+        <span class="word">give</span> <span class="word">growing</span>
+      </span>
+      <span class="hero__line">
+        <span class="word">businesses</span> <span class="word">back</span>
+        <span class="word">the</span>
+        <span class="word hero__joy">
+          <InkStroke variant="circle" trigger="load" delay={4} around={true}>joy</InkStroke>
+        </span>
+        <span class="word">of</span> <span class="word">running</span>
+        <span class="word">them.</span>
+      </span>
+    </h1>
+
+    <div class="hero__actions" data-hero-actions>
+      <a class="hero__cta" href="#work">
+        See the work
+        <span class="hero__cta-arrow" aria-hidden="true">→</span>
+      </a>
+      <a class="hero__link" href="#contact">Get in touch</a>
+    </div>
+  </div>
+</section>
+
+<style>
+  .hero {
+    min-height: 100svh;
+    display: flex;
+    align-items: center;
+    position: relative;
+    /* full-bleed, but share the page gutter so it lines up with every
+       other section's left/right inset */
+    padding-inline: var(--gutter);
+    padding-block: var(--space-xl);
+  }
+  /* On phones the viewport is tall and narrow — centre leaves big empty
+     bands. Anchor content toward the upper third and let the headline
+     grow so it fills the screen instead of floating. */
+  @media (max-width: 600px) {
+    .hero {
+      align-items: flex-start;
+      padding-top: clamp(5rem, 22vh, 11rem);
+      min-height: 92svh;
+    }
+  }
+  .hero__inner {
+    width: 100%;
+    max-width: var(--content-inner);   /* matches the capped content width */
+    margin-inline: auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: clamp(1.75rem, 1rem + 2.5vw, 3.25rem);
+  }
+
+  .hero__name {
+    color: var(--grey);
+    /* assembled-in by JS, but readable if JS never runs */
+  }
+
+  /* The statement reads like a sentence written across the screen:
+     two balanced lines that span the full central width — no max-width
+     chokehold, no empty right side. Line breaks are hand-set in markup;
+     the type is sized so each line reaches near the right edge. */
+  .hero__statement {
+    font-size: clamp(1.95rem, 1rem + 2.6vw, 3.4rem);
+    line-height: 1.06;
+    letter-spacing: -0.02em;
+    font-weight: 340;
+    margin: 0;
+    width: 100%;
+    text-wrap: nowrap; /* trust the hand-set breaks, don't auto-balance */
+  }
+  .hero__line {
+    display: block;
+    white-space: normal;
+  }
+
+  /* "joy" carries the only accent ink in the hero. */
+  .hero__joy { color: var(--ink-blue); }
+  .hero__joy :global(.ink-stroke) { padding-inline: 0.04em; }
+
+  /* word-level reveal targets. Promote to their own layer for
+     composited (stutter-free) transform + opacity animation. */
+  .word {
+    display: inline-block;
+    will-change: transform, opacity, filter;
+    transform: translateZ(0);
+    backface-visibility: hidden;
+  }
+
+  .hero__actions {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-l);
+    flex-wrap: wrap;
+  }
+  .hero__cta {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5em;
+    font-size: var(--step-0);
+    letter-spacing: 0.01em;
+    padding-bottom: 2px;
+    border-bottom: 1px solid var(--ink);
+    transition: color var(--dur-fast) var(--ease-physical),
+                border-color var(--dur-fast) var(--ease-physical);
+  }
+  .hero__cta-arrow {
+    transition: transform var(--dur-mid) var(--ease-physical);
+  }
+  .hero__cta:hover { color: var(--ink-blue); border-color: var(--ink-blue); }
+  .hero__cta:hover .hero__cta-arrow { transform: translateX(6px); }
+
+  .hero__link {
+    font-size: var(--step-0);
+    color: var(--grey);
+    transition: color var(--dur-fast) var(--ease-physical);
+  }
+  .hero__link:hover { color: var(--ink); }
+
+  /* On very narrow phones, allow the long hand-set lines to wrap so
+     nothing overflows; the assembly still reads as writing. */
+  @media (max-width: 600px) {
+    .hero__statement { text-wrap: pretty; }
+    .hero__line { display: inline; }
+  }
+
+  /* Pre-animation state: hide until JS arms the timeline. If JS is off
+     or reduced-motion, a fallback below reveals everything instantly. */
+  [data-hero][data-armed] .word,
+  [data-hero][data-armed] .hero__name,
+  [data-hero][data-armed] .hero__actions {
+    opacity: 0;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    [data-hero][data-armed] .word,
+    [data-hero][data-armed] .hero__name,
+    [data-hero][data-armed] .hero__actions { opacity: 1; }
+  }
+</style>
+
+<script>
+  // GSAP loads only with this island (single dynamic import).
+  async function initHero() {
+    const hero = document.querySelector<HTMLElement>("[data-hero]");
+    if (!hero || hero.dataset.heroInit !== undefined) return;
+    hero.dataset.heroInit = "";
+
+    const { responsive, prefersReducedMotion, gsap } = await import("../../lib/motion");
+
+    // Arm: switch to the hidden pre-animation state (only now, so no-JS
+    // visitors keep a fully visible hero).
+    hero.setAttribute("data-armed", "");
+
+    if (prefersReducedMotion()) {
+      hero.querySelectorAll<HTMLElement>(".word, .hero__name, .hero__actions")
+        .forEach((el) => (el.style.opacity = "1"));
+      return;
+    }
+
+    responsive((_ctx, { isMobile }) => {
+      const words = hero.querySelectorAll(".word");
+      const name = hero.querySelector(".hero__name");
+      const actions = hero.querySelector(".hero__actions");
+
+      const tl = gsap.timeline({ delay: isMobile ? 0.3 : 0.55 });
+
+      // 1. name settles in quietly
+      tl.fromTo(name, { opacity: 0, y: 8 }, {
+        opacity: 1, y: 0, duration: 0.7, ease: "settle",
+      });
+
+      // 2. statement flows into place — words rise and settle in a
+      //    continuous wave. Two keys to silk:
+      //    (a) animate `y` in px with force3D so each word stays on its
+      //        own GPU layer (composited, not repainted) — no stutter.
+      //    (b) heavily overlapped stagger so words flow INTO each other
+      //        rather than each popping in discretely.
+      //    Blur runs as a shorter, separate tween so it clears early and
+      //    doesn't fight the transform for the whole duration.
+      tl.fromTo(words,
+        { opacity: 0, y: "0.5em", force3D: true },
+        {
+          opacity: 1, y: "0em", force3D: true,
+          duration: isMobile ? 0.9 : 1.05,
+          ease: "power3.out",
+          stagger: { each: isMobile ? 0.085 : 0.11, ease: "none" },
+        },
+        "-=0.2"
+      );
+      // blur clears quickly per word, layered under the rise above
+      tl.fromTo(words,
+        { filter: "blur(5px)" },
+        {
+          filter: "blur(0px)",
+          duration: isMobile ? 0.45 : 0.5,
+          ease: "power2.out",
+          stagger: { each: isMobile ? 0.085 : 0.11, ease: "none" },
+        },
+        "<" // start together with the rise
+      );
+
+      // 3. held beat, then actions arrive
+      //    (the ink circle draws itself via InkStroke trigger=load delay)
+      tl.fromTo(actions,
+        { opacity: 0, y: 10 },
+        { opacity: 1, y: 0, duration: 0.7, ease: "settle" },
+        "+=0.35"
+      );
+    });
+  }
+
+  initHero();
+  document.addEventListener("astro:page-load", initHero);
+</script>

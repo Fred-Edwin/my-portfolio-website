@@ -1,0 +1,6 @@
+/* Single global stylesheet entry. Import order matters:
+   tokens → reset → base → utilities. Fonts are imported in the
+   layout's frontmatter (JS) so Astro can hash + preload them. */
+@import "./tokens.css";
+@import "./reset.css";
+@import "./base.css";

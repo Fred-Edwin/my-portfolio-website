@@ -1,0 +1,112 @@
+---
+/**
+ * BlogEntries — the reading-room index. No cards, no thumbnails: a clean
+ * list separated by thin ink-blue hairlines, each entry led by a folio
+ * number in the margin (frames the series as deliberate and ongoing).
+ * Title in display serif, one-line summary in sans, date as a margin note.
+ *
+ * Shared by the homepage Blog section and the /blog index page.
+ */
+import type { Post } from "../lib/posts";
+import Hairline from "./Hairline.astro";
+
+interface Props {
+  posts: Post[];
+  class?: string;
+}
+const { posts, class: className = "" } = Astro.props;
+---
+
+<ol class:list={["entries", className]}>
+  {posts.map((p) => (
+    <li class="entry" data-entry>
+      <Hairline draw={true} />
+      <a class="entry__link" href={`/blog/${p.slug}`} aria-label={`${p.title} — read`}>
+        <span class="entry__folio">
+          <span class="entry__no label">No.</span>
+          <span class="entry__num serif">{p.no}</span>
+        </span>
+
+        <span class="entry__body">
+          <h3 class="entry__title serif">{p.title}</h3>
+          <p class="entry__summary">{p.summary}</p>
+        </span>
+
+        <span class="entry__date label">{p.date}<span class="entry__arrow" aria-hidden="true">→</span></span>
+      </a>
+    </li>
+  ))}
+</ol>
+
+<style>
+  .entries { list-style: none; margin: 0; padding: 0; }
+
+  .entry__link {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--space-2xs) var(--space-l);
+    padding-block: var(--space-l);
+    color: inherit;
+    transition: transform var(--dur-fast) var(--ease-physical);
+  }
+
+  /* Folio number — a big quiet survey marker in the margin. */
+  .entry__folio { display: flex; align-items: baseline; gap: 0.4em; }
+  .entry__no { color: var(--grey-soft); }
+  .entry__num {
+    font-size: var(--step-2);
+    font-weight: 460;
+    color: var(--ink-blue);
+    line-height: 1;
+    font-variant-numeric: lining-nums tabular-nums;
+  }
+
+  .entry__title {
+    font-size: var(--step-2);
+    font-weight: 360;
+    line-height: 1.08;
+    letter-spacing: -0.015em;
+    margin: 0 0 var(--space-2xs);
+    text-wrap: balance;
+    transition: color var(--dur-fast) var(--ease-physical);
+  }
+  .entry__summary {
+    margin: 0;
+    color: var(--grey);
+    font-size: var(--step-0);
+    line-height: 1.5;
+    max-width: 46ch;
+  }
+
+  .entry__date {
+    color: var(--grey);
+    display: inline-flex;
+    align-items: baseline;
+    gap: 0.6em;
+    white-space: nowrap;
+  }
+  .entry__arrow {
+    color: var(--ink-blue);
+    transition: transform var(--dur-fast) var(--ease-physical);
+  }
+
+  /* Hover: the whole row lifts, the title warms to ink, the arrow slides. */
+  .entry__link:hover { transform: translateX(4px); }
+  .entry__link:hover .entry__title { color: var(--ink-blue); }
+  .entry__link:hover .entry__arrow { transform: translateX(5px); }
+  .entry__link:focus-visible { outline: 2px solid var(--ink-blue); outline-offset: 6px; }
+
+  /* Desktop: folio | body | date as a three-track editorial row. */
+  @media (min-width: 760px) {
+    .entry__link {
+      grid-template-columns: minmax(5rem, 7rem) minmax(0, 1fr) auto;
+      align-items: start;
+      gap: clamp(1.5rem, 0.5rem + 3vw, 4rem);
+      padding-block: var(--space-xl);
+    }
+    .entry__folio { flex-direction: column; gap: 0.1em; }
+    .entry__num { font-size: var(--step-3); }
+    .entry__title { font-size: var(--step-3); }
+    .entry__date { padding-top: 0.5em; }
+  }
+</style>

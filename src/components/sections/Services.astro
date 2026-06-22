@@ -1,0 +1,373 @@
+---
+/**
+ * Services / "What I do" — CALM (the Blueprint Ledger, connected schematic).
+ *
+ * The grid is the content. A continuous ink-blue SPINE runs down the left;
+ * each row hangs off it — a node dot on the spine, the numeral as a survey
+ * marker, a horizontal rule that draws across with the technical label
+ * knocked out at the right. Rows sit close so the linework reads as ONE
+ * technical drawing, not separate dividers. His pitch is "I bring order to
+ * chaotic operations" — so the section visibly brings order to the page.
+ *
+ * Purely architectural: mechanical-straight lines (--ease-draw), no
+ * hand-marks here — the drawing IS the signature.
+ *
+ * No-JS / reduced-motion: everything is shown, fully drawn (armed only by JS).
+ */
+
+const intro =
+  "Most software is built by people who've never watched the business it's " +
+  "for. I build the opposite.";
+
+const rows = [
+  {
+    n: "01",
+    outcome: "Run your whole operation from one place.",
+    how:
+      "Stock, sales, staff, suppliers, reporting — the moving parts of your " +
+      "business, connected and working together instead of living in separate " +
+      "notebooks, spreadsheets, and someone's memory. One system that shows " +
+      "you what's actually happening, in real time.",
+    label: "Enterprise systems · Business management, POS, ERP",
+  },
+  {
+    n: "02",
+    outcome: "Hand the repetitive work to an agent that doesn't tire.",
+    how:
+      "The follow-ups, the data entry, the checks and reconciliations, the " +
+      "questions customers ask a hundred times a day — I build AI agents that " +
+      "handle the manual, repeating work reliably, so your team spends its " +
+      "hours on the things that actually need a person.",
+    label: "AI agents · Workflow automation",
+  },
+  {
+    n: "03",
+    outcome: "Software that fits your business — not the other way around.",
+    how:
+      "I don't start with a template. I sit with you, learn how your business " +
+      "genuinely runs, and build to that. The result is software your team " +
+      "adopts because it matches the way they already think — not another " +
+      "tool they have to fight.",
+    label: "Custom development · Built on-site",
+  },
+];
+
+const soon = {
+  n: "04",
+  outcome: "And a few products of my own, on the way.",
+  how:
+    "Ready-to-use SaaS tools built from everything I've learned solving these " +
+    "problems one business at a time — coming to market soon.",
+  label: "Lobster Technologies · SaaS — coming soon",
+};
+
+const all = [...rows, soon];
+---
+
+<section
+  id="services"
+  class="services section"
+  data-services
+  aria-labelledby="services-h"
+>
+  <div class="services__inner container">
+    <h2 id="services-h" class="vh">What I do</h2>
+    <p class="services__eyebrow label">What I do</p>
+    <p class="services__intro serif">{intro}</p>
+
+    <div class="ledger">
+      <span class="ledger__spine" data-spine aria-hidden="true"></span>
+
+      <ol class="ledger__rows">
+      {all.map((row, i) => (
+        <li class:list={["row", i === all.length - 1 && "row--soon"]} data-row>
+          <div class="row__rule">
+            <span class="row__line" data-line aria-hidden="true"></span>
+            <span class="row__node" data-node aria-hidden="true"></span>
+            <span class="row__num serif" data-num aria-hidden="true">{row.n}</span>
+            <span class="row__marker label" data-marker>{row.label}</span>
+          </div>
+
+          <div class="row__grid">
+            <h3 class="row__outcome serif" data-outcome>{row.outcome}</h3>
+            <p class="row__how" data-how>{row.how}</p>
+          </div>
+        </li>
+      ))}
+      </ol>
+    </div>
+  </div>
+</section>
+
+<style>
+  .services {
+    /* the inset of the numeral/content from the spine */
+    --spine-indent: clamp(1.6rem, 1.1rem + 1.6vw, 2.6rem);
+  }
+
+  .services__eyebrow { margin-bottom: var(--space-m); }
+
+  /* The intro is a single short, punchy line — set big in the serif so it
+     reads as a statement, not body copy. */
+  .services__intro {
+    font-size: clamp(1.1rem, 0.92rem + 0.5vw, 1.32rem);
+    line-height: 1.18;
+    letter-spacing: -0.015em;
+    font-weight: 360;
+    color: var(--ink);
+    max-width: 26ch;
+    text-wrap: balance;
+    margin-bottom: var(--space-2xl);
+  }
+
+  /* --- The ledger: a continuous spine the rows hang off --------------- */
+  .ledger { position: relative; }
+  .ledger__rows {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+  .ledger__spine {
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 1px;
+    background: var(--hairline);
+    transform-origin: top center;
+    will-change: transform;
+  }
+
+  /* Rows sit close together so the spine visibly connects them into one
+     drawing. */
+  .row {
+    position: relative;
+    padding-top: clamp(1.9rem, 1.2rem + 2.2vw, 3.1rem);
+  }
+  .row:first-child { padding-top: 0; }
+
+  /* --- The rule line (draws across, behind everything) --------------- */
+  .row__rule {
+    position: relative;
+    min-height: 1.4em;
+    padding-left: var(--spine-indent);
+    display: flex;
+    align-items: center;
+  }
+  .row__line {
+    position: absolute;
+    left: 0;            /* starts AT the spine */
+    right: 0;
+    top: 50%;
+    margin-top: -0.5px; /* centre without a transform — GSAP owns transform */
+    height: 1px;
+    background: var(--hairline);
+    transform: scaleX(1);
+    transform-origin: left center;
+    will-change: transform;
+  }
+  .row--soon .row__line {
+    background: none;
+    background-image: repeating-linear-gradient(
+      to right,
+      var(--hairline) 0 6px,
+      transparent 6px 11px
+    );
+  }
+
+  /* node dot where the rule meets the spine — a survey marker */
+  .row__node {
+    position: absolute;
+    left: -3px;
+    top: 50%;
+    width: 7px;
+    height: 7px;
+    margin-top: -3.5px;
+    border-radius: 50%;
+    background: var(--ink-blue);
+  }
+  .row--soon .row__node {
+    background: none;
+    border: 1px solid var(--grey-soft);
+  }
+
+  /* the numeral — a survey marker on the line, knocking the rule out */
+  .row__num {
+    position: relative;
+    z-index: 1;
+    background: var(--paper);
+    padding-right: 0.7rem;
+    font-size: clamp(1.0rem, 0.9rem + 0.28vw, 1.12rem);
+    font-weight: 480;
+    color: var(--ink-blue);
+    line-height: 1;
+    font-variant-numeric: lining-nums tabular-nums;
+  }
+
+  /* technical label. Mobile: a kicker under the rule. Desktop: knocked out
+     of the paper, sitting ON the rule at the right. */
+  .row__marker {
+    display: block;
+    margin-top: var(--space-s);
+    margin-left: var(--spine-indent);
+    color: var(--grey);
+  }
+
+  /* --- The content --------------------------------------------------- */
+  .row__grid {
+    margin-top: clamp(0.9rem, 0.6rem + 1vw, 1.5rem);
+    padding-left: var(--spine-indent);
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--space-m);
+  }
+
+  .row__outcome {
+    margin: 0;
+    font-size: clamp(1.2rem, 1.0rem + 0.65vw, 1.52rem);
+    line-height: 1.08;
+    letter-spacing: -0.015em;
+    font-weight: 360;
+    color: var(--ink);
+    text-wrap: balance;
+    max-width: 18ch;
+  }
+
+  .row__how {
+    margin: 0;
+    font-size: clamp(0.92rem, 0.86rem + 0.16vw, 0.98rem);
+    line-height: var(--lh-body);
+    color: var(--ink);
+    max-width: 46ch;
+  }
+
+  /* Coming-soon reads lighter throughout. */
+  .row--soon .row__num { color: var(--grey-soft); }
+  .row--soon .row__outcome { color: var(--grey); font-weight: 340; }
+  .row--soon .row__how { color: var(--grey); }
+
+  /* --- Desktop: asymmetric two-column + marker on the line ----------- */
+  @media (min-width: 720px) {
+    .row__marker {
+      position: absolute;
+      right: 0;
+      top: 0.7em;
+      transform: translateY(-50%);
+      margin: 0;
+      background: var(--paper);
+      padding-inline: 0.85rem;
+      max-width: 55%;
+      text-align: right;
+    }
+
+    .row__grid {
+      grid-template-columns: minmax(0, 1.05fr) minmax(0, 0.95fr);
+      gap: clamp(2.5rem, 1rem + 5vw, 6rem);
+      align-items: start;
+    }
+
+    /* the "how" reads as the annotation to the big outcome line */
+    .row__how { margin-top: 0.35em; }
+    .row__outcome { max-width: 16ch; }
+  }
+
+  @media (min-width: 1100px) {
+    .row__outcome { max-width: 15ch; }
+    .row__how { max-width: 48ch; }
+  }
+
+  /* --- Pre-animation state (armed by JS only) ------------------------ */
+  [data-services][data-armed] [data-spine] { transform: scaleY(0); }
+  [data-services][data-armed] [data-line] { transform: scaleX(0); }
+  [data-services][data-armed] [data-node] { opacity: 0; transform: scale(0); }
+  [data-services][data-armed] [data-marker],
+  [data-services][data-armed] [data-num],
+  [data-services][data-armed] [data-outcome],
+  [data-services][data-armed] [data-how] { opacity: 0; }
+
+  @media (prefers-reduced-motion: reduce) {
+    [data-services][data-armed] [data-spine] { transform: scaleY(1); }
+    [data-services][data-armed] [data-line] { transform: scaleX(1); }
+    [data-services][data-armed] [data-node] { opacity: 1; transform: scale(1); }
+    [data-services][data-armed] [data-marker],
+    [data-services][data-armed] [data-num],
+    [data-services][data-armed] [data-outcome],
+    [data-services][data-armed] [data-how] { opacity: 1; }
+  }
+</style>
+
+<script>
+  // The spine draws down first as the ledger enters; then each row assembles
+  // on scroll-in — its rule draws across, the node lands, marker knocks out,
+  // numeral + text settle up. Gated behind reduced-motion (which leaves the
+  // markup fully shown — we never arm it).
+  async function initServices() {
+    const section = document.querySelector<HTMLElement>("[data-services]");
+    if (!section || section.dataset.init !== undefined) return;
+    section.dataset.init = "";
+
+    const { responsive, prefersReducedMotion, gsap, ScrollTrigger } =
+      await import("../../lib/motion");
+    if (prefersReducedMotion()) return;
+
+    // Arm: switch to the hidden pre-animation state only now, so no-JS
+    // visitors keep a fully drawn, readable section.
+    section.setAttribute("data-armed", "");
+
+    responsive(() => {
+      const ledger = section.querySelector<HTMLElement>(".ledger");
+      const spine = section.querySelector("[data-spine]");
+
+      // 1. the spine draws down the page, establishing the structure
+      gsap.fromTo(spine, { scaleY: 0 }, {
+        scaleY: 1, duration: 1.2, ease: "draw",
+        scrollTrigger: { trigger: ledger, start: "top 80%" },
+      });
+
+      // 2. each row hangs itself off the spine
+      const rows = section.querySelectorAll<HTMLElement>("[data-row]");
+      rows.forEach((row) => {
+        const line = row.querySelector("[data-line]");
+        const node = row.querySelector("[data-node]");
+        const marker = row.querySelector("[data-marker]");
+        const num = row.querySelector("[data-num]");
+        const outcome = row.querySelector("[data-outcome]");
+        const how = row.querySelector("[data-how]");
+
+        const tl = gsap.timeline({
+          scrollTrigger: { trigger: row, start: "top 84%" },
+        });
+
+        // node lands on the spine
+        tl.fromTo(node, { opacity: 0, scale: 0 }, {
+          opacity: 1, scale: 1, duration: 0.4, ease: "settle",
+        });
+        // the rule draws across from the spine — mechanical, hand-speed
+        tl.fromTo(line, { scaleX: 0 }, {
+          scaleX: 1, duration: 0.9, ease: "draw",
+        }, "-=0.2");
+        // the numeral marker settles in over the line
+        tl.fromTo(num, { opacity: 0, y: 10 }, {
+          opacity: 1, y: 0, duration: 0.6, ease: "settle",
+        }, "-=0.55");
+        // the label knocks itself onto the line
+        tl.fromTo(marker, { opacity: 0 }, {
+          opacity: 1, duration: 0.6, ease: "settle",
+        }, "-=0.4");
+        // the outcome settles up
+        tl.fromTo(outcome, { opacity: 0, y: 18 }, {
+          opacity: 1, y: 0, duration: 0.9, ease: "settle",
+        }, "-=0.5");
+        // the annotation follows, overlapped so the row feels like one move
+        tl.fromTo(how, { opacity: 0, y: 18 }, {
+          opacity: 1, y: 0, duration: 0.9, ease: "settle",
+        }, "-=0.72");
+      });
+
+      ScrollTrigger.refresh();
+    });
+  }
+
+  initServices();
+  document.addEventListener("astro:page-load", initServices);
+</script>

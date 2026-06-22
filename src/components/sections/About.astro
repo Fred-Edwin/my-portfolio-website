@@ -1,0 +1,227 @@
+---
+/**
+ * About — CALM. The trust handshake. Asymmetric two-column:
+ *   narrow left  = portrait + magazine caption
+ *   wide right   = the narrative prose (the one place the site reads
+ *                  like a well-set page)
+ * A thin ink-blue hairline runs down the left margin (manuscript feel).
+ * Hand gesture: a STATIC underline under "I show up" — already drawn,
+ * does not redraw on scroll (calm; the hero performed, About simply is).
+ */
+import { Image } from "astro:assets";
+import InkStroke from "../InkStroke.astro";
+import portrait from "../../assets/img/portrait.png";
+---
+
+<section id="about" class="about section" aria-labelledby="about-h">
+  <div class="about__inner container">
+    <p class="about__eyebrow label">About</p>
+
+    <div class="about__grid">
+      <figure class="about__portrait" data-about-fig>
+        <Image
+          src={portrait}
+          alt="Edwinfred Kamau"
+          widths={[320, 480, 640]}
+          sizes="(max-width: 760px) 60vw, 28vw"
+          formats={["avif", "webp"]}
+          quality={72}
+          loading="lazy"
+        />
+        <figcaption class="label">Edwinfred Kamau. Nairobi, 2026.</figcaption>
+      </figure>
+
+      <div class="about__body" data-about-body>
+        <h2 id="about-h" class="vh">About Edwinfred Kamau</h2>
+        <div class="prose">
+          <p class="about__lead" data-dropcap>
+            I'm Edwinfred Kamau. I build software and AI agents, and I run a
+            company called Lobster Technologies.
+          </p>
+          <p>
+            Here's the thing I figured out early: the software I loved building
+            was the exact software real businesses were desperate for. So I went
+            looking for the businesses.
+          </p>
+          <p>
+            And I learned something there. You can't build a great system from
+            behind a screen. You have to go see the work.
+          </p>
+
+          <blockquote class="about__quote serif">
+            The best part of the job isn't the code. It's the
+            <span class="accent">people.</span>
+          </blockquote>
+
+          <p>
+            So that's how I work.
+            <InkStroke variant="underline" trigger="static"><strong>I show up.</strong></InkStroke>
+            I sit with the people I'm building for. I watch how their day
+            actually goes. We figure out together where the hours are
+            disappearing — the manual stuff, the repetitive stuff, the stuff
+            that's easy to get wrong.
+          </p>
+          <p>
+            Then I build the thing that makes it disappear. Enterprise software
+            and AI agents that quietly do the heavy lifting. And I don't vanish
+            after launch — I stick around, because a tool is only good if it
+            keeps being good.
+          </p>
+          <p>
+            That's what Lobster Technologies is for. Not shipping features for
+            the sake of it. Giving a business owner their time and attention
+            back — so the work only they can do is the work they actually get to
+            spend their day on.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .about__eyebrow { margin-bottom: var(--space-l); }
+
+  .about__grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--space-xl);
+    /* the left-margin hairline lives on the grid container */
+  }
+
+  /* Portrait — placed, not pasted: a warm keyline frame + inset paper
+     mat so it reads as a printed plate on the page. */
+  .about__portrait {
+    margin: 0;
+    max-width: 16.5rem;
+    padding: 0.5rem;
+    background: var(--paper);
+    border: 1px solid var(--hairline);
+    box-shadow: var(--shadow-media);
+  }
+  .about__portrait :global(img) {
+    width: 100%;
+    height: auto;
+    display: block;
+    border-radius: 1px;
+    /* faint warm grade to sit it fully in the palette */
+    filter: saturate(0.96) contrast(1.02);
+  }
+  .about__portrait figcaption {
+    margin-top: var(--space-s);
+    color: var(--grey);
+    max-width: 24ch;
+  }
+
+  /* Editorial measure: wide enough to keep the section short, capped so
+     lines never get so long they tire the eye. */
+  .about__body .prose {
+    max-width: 60ch;
+    font-size: clamp(0.92rem, 0.86rem + 0.16vw, 0.98rem);
+  }
+  .about__body .prose strong { font-weight: 560; }
+  /* lead paragraph slightly larger — magazine opener feel */
+  .about__lead {
+    font-size: 1.12em;
+    color: var(--ink);
+  }
+
+  /* Drop cap — large Fraunces initial on the first paragraph (ties to
+     the blog's drop-cap motif). */
+  .about__lead[data-dropcap]::first-letter {
+    font-family: var(--font-serif);
+    font-weight: 460;
+    float: left;
+    font-size: 2.7em;
+    line-height: 0.78;
+    padding-right: 0.08em;
+    padding-top: 0.02em;
+    color: var(--ink);
+  }
+
+  /* Margin pull-quote — larger serif italic, lifted out of the column
+     with an ink-blue hairline above it. Breaks the text block. */
+  .about__quote {
+    margin: var(--space-l) 0 var(--space-l) 0;
+    padding-top: var(--space-m);
+    border-top: 1px solid var(--hairline);
+    font-style: italic;
+    font-weight: 360;
+    font-size: clamp(1.08rem, 0.95rem + 0.35vw, 1.3rem);
+    line-height: 1.22;
+    letter-spacing: -0.01em;
+    max-width: 28ch;
+    text-wrap: balance;
+    color: var(--ink);
+  }
+
+  /* ink underline under "I go to them" — sits a touch tighter */
+  .about__body :global(.ink-stroke) { white-space: nowrap; }
+
+  @media (min-width: 980px) {
+    /* pull the quote left, into the negative space toward the margin */
+    .about__quote {
+      margin-left: -3.5rem;
+      max-width: 24ch;
+    }
+  }
+
+  @media (min-width: 760px) {
+    .about__grid {
+      grid-template-columns: minmax(13rem, 20rem) minmax(0, 1fr);
+      gap: clamp(2.5rem, 1rem + 5vw, 5.5rem);
+      align-items: start;
+      position: relative;
+      padding-left: var(--space-l);
+    }
+    /* manuscript hairline down the left margin */
+    .about__grid::before {
+      content: "";
+      position: absolute;
+      left: 0;
+      top: 0.4rem;
+      bottom: 0.4rem;
+      width: 1px;
+      background: var(--hairline);
+    }
+    .about__portrait { position: sticky; top: 6rem; }
+  }
+</style>
+
+<script>
+  // Calm settle-up on scroll for the portrait + prose as one block.
+  async function initAbout() {
+    const section = document.querySelector<HTMLElement>("#about");
+    if (!section || section.dataset.init !== undefined) return;
+    section.dataset.init = "";
+
+    const { responsive, prefersReducedMotion, gsap, ScrollTrigger } =
+      await import("../../lib/motion");
+    if (prefersReducedMotion()) return;
+
+    responsive(() => {
+      const fig = section.querySelector("[data-about-fig]");
+      const body = section.querySelector("[data-about-body]");
+      gsap.fromTo([fig, body],
+        { opacity: 0, y: 24 },
+        {
+          opacity: 1, y: 0, duration: 1, ease: "settle", stagger: 0.12,
+          scrollTrigger: { trigger: section, start: "top 75%" },
+        }
+      );
+      // portrait fades up with the faintest scale-down settle
+      if (fig) {
+        gsap.fromTo(fig.querySelector("img"),
+          { scale: 1.04 },
+          {
+            scale: 1, duration: 1.4, ease: "settle",
+            scrollTrigger: { trigger: section, start: "top 75%" },
+          }
+        );
+      }
+      ScrollTrigger.refresh();
+    });
+  }
+  initAbout();
+  document.addEventListener("astro:page-load", initAbout);
+</script>

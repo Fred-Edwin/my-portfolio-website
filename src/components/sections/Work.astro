@@ -1,0 +1,428 @@
+---
+/**
+ * Work / Projects — WOW (the second peak; the most persuasive section).
+ *
+ * Each project unfolds as a short scroll-driven story on the four-part spine:
+ * context → before → built → after. Imagery animates (wakes into view); TEXT
+ * DOES NOT PERFORM — it settles calmly. Each "after" win is underlined once.
+ *
+ * Media: real product shots in device mockups (browser + phone frames), drawn
+ * from the live systems. Two flagships (Wendo, Washan) get the cinematic
+ * treatment; three websites get a lighter framed grouping. Stills stand in as
+ * poster frames now; short demo loops can swap in later with no layout change.
+ *
+ * Copy from the real PRDs — only hard before/after METRICS remain [CONFIRM].
+ */
+import InkStroke from "../InkStroke.astro";
+import BrowserFrame from "../BrowserFrame.astro";
+import PhoneFrame from "../PhoneFrame.astro";
+
+import wendoDesktop from "../../assets/img/wendo-rms-login-desktop.png";
+import wendoMenu from "../../assets/img/wendo-rms-menu-mobile.jpeg";
+import washanDash from "../../assets/img/washan-groceries-dashboard-mobile.jpeg";
+import washanLogin from "../../assets/img/washan-groceries-login.jpeg";
+import wendoSite from "../../assets/img/wendo-website-hero.png";
+import sustainSite from "../../assets/img/sustainability-institute-hero.png";
+import dareSite from "../../assets/img/sustainability-institute-2.png"; // [CONFIRM] this is the Dare to Aspire site (content matches its mission); rename file when convenient
+
+// --- Flagship case studies ------------------------------------------------
+const flagships = [
+  {
+    id: "wendo",
+    name: "Wendo Coffee & Bistro",
+    tagline:
+      "A restaurant management system running the floor, the kitchen, and the books across every branch — as one.",
+    before:
+      "Two branches in Nyeri, run entirely on paper. Waiters hand-wrote every order and walked it to the kitchen and the barista station across the room. Nobody could tell if a dish was being made or sitting forgotten. Stock was counted by hand, both branches were managed from memory, and the business collected almost no data on itself.",
+    built:
+      "One system, live on every phone and tablet. A waiter takes an order and it splits itself — food to the kitchen screen, drinks to the barista — in real time. Staff clock in by GPS, managers watch their branch live, and the director sees everything from anywhere. Payments, credit accounts, HR, reporting — one platform, built to go from two branches to ten without a rebuild.",
+    afterLead: "Orders hit the stations the moment they're taken, and",
+    afterWin: "the paper walk is gone for good.",
+    afterTail:
+      "The floor and the kitchen finally move in sync, and the director runs both Nyeri branches — Kingz and Town — from a phone instead of a guess. Now eight build phases deep and still live. [CONFIRM a hard metric — avg prep time, orders/day, or onboarding time.]",
+  },
+  {
+    id: "washan",
+    name: "Washan Groceries",
+    tagline:
+      "A mobile-first system that puts a two-location grocery wholesaler — clients, credit, stock, and cash — in the owner's pocket.",
+    before:
+      "Washan ran the whole business from memory, WhatsApp, and paper. Per-client prices for hotels, hospitals and clubs lived only in her head. Outstanding credit, stock at each location, whether the business was even profitable — none of it was visible the moment she stepped away from a counter. She wasn't running the system. She was the system.",
+    built:
+      "One mobile system shaped around how she already works. Staff log sales and spoilage in a few taps; each corporate client's negotiated price applies itself; credit becomes a running ledger per client; invoices generate as clean, branded PDFs ready to send on WhatsApp. The owner sees stock, receivables, and the day's takings across both locations — from her phone, from anywhere.",
+    afterLead: "The business runs on a system now, not memory —",
+    afterWin: "Washan can see all of it from her phone.",
+    afterTail:
+      "Stock at both locations, every shilling of client credit, the day's money by channel, professional invoices in seconds — all in her pocket. Built to white-label and deploy for the next trader.",
+  },
+];
+
+// --- The three websites — lighter framed grouping (range, not headline acts)
+const websites = [
+  {
+    name: "Wendo Coffee & Bistro",
+    url: "https://www.wendoz.co.ke/",
+    host: "wendoz.co.ke",
+    img: wendoSite,
+    meta: "The bistro's public face — menu, branches, and the front door to ordering.",
+  },
+  {
+    name: "Dare to Aspire",
+    url: "https://dare-to-aspire.org/",
+    host: "dare-to-aspire.org",
+    img: dareSite,
+    meta: "Cultivating the next generation of ethical leaders — a site to tell their story and reach the people they serve.",
+  },
+  {
+    name: "Sustainability Institute",
+    url: "https://sustainability-institute-website.vercel.app/#",
+    host: "sustainability-institute.vercel.app",
+    img: sustainSite,
+    meta: "A clean, credible web presence for a sustainability company in South Africa.",
+  },
+];
+---
+
+<section id="work" class="work section" data-work aria-labelledby="work-h">
+  <div class="work__inner container">
+    <header class="work__head">
+      <p class="work__eyebrow label">Work</p>
+      <h2 id="work-h" class="work__title serif">
+        Here's what I've built — and what it changed.
+      </h2>
+    </header>
+
+    {flagships.map((p) => (
+      <article class:list={["proj", p.id === "washan" && "proj--flip"]} aria-labelledby={`${p.id}-h`}>
+        {/* 1. Title beat — name + tagline directly under it */}
+        <div class="proj__title-beat" data-beat>
+          <h3 id={`${p.id}-h`} class="proj__name serif">{p.name}</h3>
+          <p class="proj__tagline serif-italic">{p.tagline}</p>
+        </div>
+
+        {/* 2. Imagery reveal — floating devices, no box (animates) */}
+        <div class="proj__media" data-work-media>
+          {p.id === "wendo" ? (
+            <div class="mock mock--wendo">
+              <BrowserFrame
+                class="mock__screen"
+                src={wendoDesktop}
+                url="app.wendo-rms.co.ke"
+                alt="Wendo RMS — sign in"
+                widths={[640, 1000, 1400]}
+                sizes="(max-width: 760px) 84vw, 36rem"
+              />
+              <PhoneFrame
+                class="mock__phone"
+                src={wendoMenu}
+                alt="Wendo RMS — taking an order on the floor"
+                widths={[240, 360, 480]}
+                sizes="(max-width: 760px) 26vw, 9rem"
+              />
+            </div>
+          ) : (
+            <div class="mock mock--washan">
+              <PhoneFrame
+                class="mock__phone-back"
+                src={washanLogin}
+                alt="Washan Groceries — staff sign in"
+                widths={[240, 360, 480]}
+                sizes="(max-width: 760px) 38vw, 12rem"
+              />
+              <PhoneFrame
+                class="mock__phone-front"
+                src={washanDash}
+                alt="Washan Groceries — the owner's dashboard"
+                widths={[260, 400, 540]}
+                sizes="(max-width: 760px) 46vw, 14rem"
+              />
+            </div>
+          )}
+        </div>
+
+        {/* 3. Story beats — arrive on scroll, settle calmly (no performance) */}
+        <div class="proj__story">
+          <p class="proj__beat proj__beat--before" data-beat>
+            <span class="proj__beat-key label">Before</span>
+            <span>{p.before}</span>
+          </p>
+          <p class="proj__beat proj__beat--built" data-beat>
+            <span class="proj__beat-key label">Built</span>
+            <span>{p.built}</span>
+          </p>
+          <p class="proj__beat proj__beat--after" data-beat>
+            <span class="proj__beat-key label">After</span>
+            <span>
+              {p.afterLead}{" "}
+              <InkStroke variant="underline" trigger="scroll"><strong>{p.afterWin}</strong></InkStroke>{" "}
+              {p.afterTail}
+            </span>
+          </p>
+        </div>
+      </article>
+    ))}
+
+    {/* The website group — lighter, smaller, reads as range/productivity */}
+    <section class="sites" aria-labelledby="sites-h">
+      <h3 id="sites-h" class="sites__head serif">And a handful of sites for businesses across Kenya and beyond.</h3>
+      <ul class="sites__grid">
+        {websites.map((s) => (
+          <li class="site" data-beat>
+            <a class="site__shot" href={s.url} target="_blank" rel="noopener noreferrer" aria-label={`${s.name} — visit site`}>
+              {s.img ? (
+                <BrowserFrame
+                  src={s.img}
+                  url={s.host}
+                  alt={`${s.name} — website`}
+                  widths={[420, 640, 900]}
+                  sizes="(max-width: 760px) 90vw, 30vw"
+                />
+              ) : (
+                <span class="site__placeholder">
+                  <span class="label">Screenshot · coming</span>
+                </span>
+              )}
+            </a>
+            <a class="site__name serif" href={s.url} target="_blank" rel="noopener noreferrer">
+              {s.name}
+              <span class="site__arrow" aria-hidden="true">↗</span>
+            </a>
+            <p class="site__meta">{s.meta}</p>
+          </li>
+        ))}
+      </ul>
+    </section>
+  </div>
+</section>
+
+<style>
+  .work__head { margin-bottom: var(--space-2xl); }
+  .work__eyebrow { margin-bottom: var(--space-m); }
+  .work__title {
+    font-size: var(--step-3);
+    line-height: var(--lh-head);
+    letter-spacing: -0.015em;
+    font-weight: 360;
+    max-width: 30ch;
+    text-wrap: balance;
+  }
+
+  /* --- A project case study ----------------------------------------- */
+  .proj { margin-bottom: var(--space-3xl); }
+  .proj:last-of-type { margin-bottom: var(--space-2xl); }
+
+  /* Title beat — name + tagline directly under the name. */
+  .proj__title-beat { margin-bottom: var(--space-l); max-width: 30ch; }
+  .proj__name {
+    font-size: var(--step-4);
+    line-height: 1.0;
+    letter-spacing: -0.02em;
+    font-weight: 340;
+    margin: 0 0 var(--space-s);
+    text-wrap: balance;
+  }
+  .proj__tagline {
+    font-size: var(--step-1);
+    color: var(--grey);
+    font-weight: 360;
+    line-height: 1.4;
+    margin: 0;
+    max-width: 40ch;
+  }
+
+  /* --- Media: two separate floating devices, gently tilted ---------- */
+  .proj__media {
+    --shadow-float:
+      0 8px 18px color-mix(in srgb, var(--ink) 9%, transparent),
+      0 34px 60px color-mix(in srgb, var(--ink) 15%, transparent);
+    position: relative;
+    margin: var(--space-m) 0 var(--space-2xl);
+    will-change: transform, opacity;
+  }
+  .mock {
+    position: relative;
+    max-width: 34rem;
+    margin-inline: auto;
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    gap: clamp(0.85rem, 2.5vw, 2.5rem);
+  }
+  .proj__media :global(.bframe),
+  .proj__media :global(.phone) { box-shadow: var(--shadow-float); }
+
+  /* Wendo: wide laptop browser (2:1) + a realistically small order phone.
+     The browser is short, the phone is tall — so the phone must stay small
+     (~14%) or it dwarfs the laptop. It drops + tilts as a companion device. */
+  .mock--wendo .mock__screen {
+    flex: 0 0 70%;
+    transform: rotate(-2.5deg);
+  }
+  .mock--wendo .mock__phone {
+    flex: 0 0 15%;
+    transform: rotate(4deg) translateY(36%);
+  }
+
+  /* Washan: two phones, similar real size, side by side with a clear gap;
+     opposite tilts, the second dropped for the stagger. */
+  .mock--washan .mock__phone-front {
+    flex: 0 0 43%;
+    transform: rotate(-3.5deg);
+  }
+  .mock--washan .mock__phone-back {
+    flex: 0 0 40%;
+    transform: rotate(4.5deg) translateY(14%);
+  }
+
+  /* Story beats — generous reading measure, calm. */
+  .proj__story { display: grid; gap: var(--space-l); max-width: var(--measure); }
+  .proj__beat {
+    margin: 0;
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--space-2xs);
+    font-size: var(--step-0);
+    line-height: 1.55;
+  }
+  .proj__beat-key { align-self: start; padding-top: 0.35em; }
+  .proj__beat--before { color: var(--grey); }
+  .proj__beat--before .proj__beat-key { color: var(--grey-soft); }
+  .proj__beat--built,
+  .proj__beat--after { color: var(--ink); }
+  .proj__beat--after :global(.ink-stroke) strong { font-weight: 480; }
+
+  /* --- The website group -------------------------------------------- */
+  .sites { margin-top: var(--space-xl); }
+  .sites__head {
+    font-size: var(--step-2);
+    font-weight: 350;
+    letter-spacing: -0.01em;
+    max-width: 40ch;
+    text-wrap: balance;
+    margin: 0 0 var(--space-xl);
+    color: var(--ink);
+  }
+  .sites__grid {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--space-xl);
+  }
+  .site__shot {
+    display: block;
+    margin-bottom: var(--space-m);
+    transition: transform var(--dur-fast) var(--ease-physical);
+  }
+  .site__shot:hover { transform: translateY(-3px); }
+  /* placeholder for the still-missing screenshot (Dare to Aspire) */
+  .site__placeholder {
+    display: grid;
+    place-items: center;
+    aspect-ratio: 16 / 10;
+    border: 1px dashed var(--grey-soft);
+    border-radius: 10px;
+    background: var(--paper-sunk);
+  }
+  .site__placeholder .label { color: var(--grey-soft); }
+  .site__name {
+    display: inline-flex;
+    align-items: baseline;
+    gap: 0.4em;
+    font-size: var(--step-1);
+    font-weight: 380;
+    margin: 0 0 var(--space-3xs);
+    transition: color var(--dur-fast) var(--ease-physical);
+  }
+  .site__name:hover { color: var(--ink-blue); }
+  .site__arrow {
+    font-size: 0.8em;
+    color: var(--grey);
+    transition: transform var(--dur-fast) var(--ease-physical),
+                color var(--dur-fast) var(--ease-physical);
+  }
+  .site__name:hover .site__arrow { transform: translate(2px, -2px); color: var(--ink-blue); }
+  .site__meta { margin: 0; color: var(--grey); font-size: var(--step-0); line-height: 1.5; }
+
+  /* --- Tablet: two-line beat keys + 3-up website grid --------------- */
+  @media (min-width: 760px) {
+    .proj__beat {
+      grid-template-columns: minmax(5.5rem, 7rem) minmax(0, 1fr);
+      gap: var(--space-m);
+    }
+    .proj__beat-key { padding-top: 0.45em; }
+    .sites__grid { grid-template-columns: repeat(3, 1fr); gap: var(--space-l); }
+  }
+
+  /* --- Desktop: text one side, floating devices the other (alternating).
+     Wendo → text left / devices right.  Washan → devices left / text right. */
+  @media (min-width: 880px) {
+    .proj {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1.04fr);
+      column-gap: clamp(2.5rem, 1rem + 5vw, 6rem);
+      align-items: start;
+      margin-bottom: var(--space-3xl);
+    }
+    .proj__title-beat { grid-column: 1; grid-row: 1; margin-bottom: 0; }
+    .proj__media { grid-column: 2; grid-row: 1 / 3; align-self: center; margin: 0; }
+    .proj__story { grid-column: 1; grid-row: 2; margin-top: var(--space-l); }
+
+    .proj--flip .proj__title-beat,
+    .proj--flip .proj__story { grid-column: 2; }
+    .proj--flip .proj__media { grid-column: 1; }
+  }
+
+  /* --- Pre-animation state (armed by JS only) ----------------------- */
+  [data-work][data-armed] [data-work-media] { opacity: 0; }
+  [data-work][data-armed] [data-beat] { opacity: 0; }
+
+  @media (prefers-reduced-motion: reduce) {
+    [data-work][data-armed] [data-work-media],
+    [data-work][data-armed] [data-beat] { opacity: 1; }
+  }
+</style>
+
+<script>
+  // WOW discipline: media animates (rises + settles, "wakes"); text settles
+  // calmly and stays readable. The ink underline on each "after" win draws
+  // itself via InkStroke (trigger=scroll). Gated behind reduced-motion.
+  async function initWork() {
+    const section = document.querySelector<HTMLElement>("[data-work]");
+    if (!section || section.dataset.init !== undefined) return;
+    section.dataset.init = "";
+
+    const { responsive, prefersReducedMotion, gsap, ScrollTrigger } =
+      await import("../../lib/motion");
+    if (prefersReducedMotion()) return;
+
+    section.setAttribute("data-armed", "");
+
+    responsive(() => {
+      section.querySelectorAll<HTMLElement>("[data-beat]").forEach((beat) => {
+        gsap.fromTo(beat,
+          { opacity: 0, y: 22 },
+          {
+            opacity: 1, y: 0, duration: 1, ease: "settle",
+            scrollTrigger: { trigger: beat, start: "top 86%" },
+          }
+        );
+      });
+
+      section.querySelectorAll<HTMLElement>("[data-work-media]").forEach((media) => {
+        gsap.fromTo(media,
+          { opacity: 0, y: 64, scale: 1.05 },
+          {
+            opacity: 1, y: 0, scale: 1, duration: 1.4, ease: "settle",
+            scrollTrigger: { trigger: media, start: "top 82%" },
+          }
+        );
+      });
+
+      ScrollTrigger.refresh();
+    });
+  }
+  initWork();
+  document.addEventListener("astro:page-load", initWork);
+</script>

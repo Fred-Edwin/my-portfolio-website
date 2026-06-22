@@ -1,0 +1,115 @@
+/* ============================================================
+   DESIGN TOKENS — single source of truth
+   Edwinfred Kamau · personal site
+   Warm bone paper · warm near-black · scarce ink blue.
+   Four colours. We refuse a fifth.
+   ============================================================ */
+
+:root {
+  /* ---- Colour ---------------------------------------------- */
+  /* Background: warm bone / oat paper. Never pure white, never cool grey. */
+  --paper: #f6f2e9;
+  /* A faintly deeper paper for insets / poster frames. */
+  --paper-sunk: #efe9dc;
+
+  /* Text: warm near-black. Never pure black. */
+  --ink: #1a1814;
+
+  /* Accent: deep ink blue. Used scarcely — hairlines, hand marks,
+     one or two key words per section. Warmed slightly so it sits in
+     the paper rather than fighting it. */
+  --ink-blue: #243f63;
+  --ink-blue-soft: #2f4d75; /* hover / lighter strokes */
+
+  /* Muted grey: secondary + "before" text, small-caps technical labels. */
+  --grey: #8a8276;
+  --grey-soft: #a8a194;
+
+  /* Hairline: the grid made visible. Ink blue at low strength. */
+  --hairline: color-mix(in srgb, var(--ink-blue) 38%, transparent);
+
+  /* ---- Typography families --------------------------------- */
+  /* Display serif — Fraunces (Canela/Ogg-class warmth, real italic).
+     Grotesque sans — Inter Tight (clean, slightly mechanical).
+     Metric-matched system fallbacks to minimise swap shift. */
+  --font-serif: "Fraunces", "Fraunces-fallback", Georgia, "Times New Roman", serif;
+  --font-sans: "Inter Tight", "InterTight-fallback", system-ui, -apple-system,
+    "Segoe UI", Roboto, sans-serif;
+
+  /* Optical settings for Fraunces (variable). SOFT keeps it warm not stuffy. */
+  --serif-soft: 60;
+  --serif-wonk: 4;
+
+  /* ---- Fluid type scale ------------------------------------ */
+  /* clamp(min, preferred, max). Floor at 320px (mins untouched). Ceilings
+     lowered ~25% and slopes tuned so big type tops out around a ~1500px
+     design width — so 100% on a wide monitor reads calm, not oversized,
+     and the layout stops scaling up past there. */
+  --step--1: clamp(0.83rem, 0.80rem + 0.15vw, 0.92rem);   /* small caps / captions */
+  --step-0:  clamp(0.95rem, 0.92rem + 0.10vw, 1.00rem);   /* body */
+  --step-1:  clamp(1.05rem, 0.98rem + 0.18vw, 1.12rem);   /* lead / sub-lines */
+  --step-2:  clamp(1.25rem, 1.12rem + 0.32vw, 1.44rem);   /* row outcomes */
+  --step-3:  clamp(1.55rem, 1.33rem + 0.62vw, 2.04rem);   /* section heads */
+  --step-4:  clamp(1.95rem, 1.62rem + 1.30vw, 3.04rem);   /* project titles */
+  --step-5:  clamp(3.20rem, 2.30rem + 3.30vw, 5.40rem);   /* hero statement (unused — Hero is hardcoded) */
+
+  /* ---- Line-height + measure ------------------------------- */
+  --lh-tight: 1.04;   /* hero / big display */
+  --lh-head: 1.12;    /* section heads */
+  --lh-body: 1.62;    /* reading prose */
+  --measure: 65ch;    /* reading column */
+  --measure-narrow: 38ch;
+
+  /* ---- Spacing scale (rhythm) ------------------------------ */
+  --space-3xs: 0.25rem;
+  --space-2xs: 0.5rem;
+  --space-xs:  0.75rem;
+  --space-s:   1rem;
+  --space-m:   1.5rem;
+  --space-l:   2.5rem;
+  --space-xl:  4rem;
+  --space-2xl: 6.5rem;
+  --space-3xl: 10rem;   /* between major sections */
+
+  /* Page gutters — a modest edge inset. Beyond --content-max the layout
+     centres (margins grow), so the gutter no longer has to do the work of
+     keeping content off the edge on huge monitors. */
+  --gutter: clamp(1.5rem, 1rem + 3vw, 5rem);
+  /* Hard cap on how wide the layout grows. Beyond this it centres instead of
+     stretching — so a 2560px screen reads like a ~1500px one, not blown up. */
+  --content-max: 100rem;        /* container cap (≈1600px); content ≈1440px */
+  --content-inner: 90rem;       /* content width after gutters (Hero matches) */
+  --measure-wide: 92ch;
+
+  /* ---- Motion: the "sauce" lives here ---------------------- */
+  /* Durations — deliberate, never rushed. */
+  --dur-fast: 0.45s;
+  --dur-mid: 0.9s;
+  --dur-slow: 1.4s;
+
+  /* Easing — heavy, engineered ease-outs. Felt before noticed.
+     These are the CSS-side curves; GSAP gets matching CustomEase
+     definitions in motion.ts so JS + CSS feel identical. */
+  --ease-settle: cubic-bezier(0.16, 1, 0.3, 1);     /* type arrival: long heavy tail */
+  --ease-draw:   cubic-bezier(0.65, 0.05, 0.36, 1); /* hairlines: mechanical-straight */
+  --ease-hand:   cubic-bezier(0.42, 0, 0.30, 1);    /* ink strokes: hand-speed */
+  --ease-physical: cubic-bezier(0.22, 0.61, 0.36, 1); /* hover states */
+
+  /* ---- Elevation (one soft shadow system) ----------------- */
+  --shadow-media:
+    0 1px 2px color-mix(in srgb, var(--ink) 6%, transparent),
+    0 12px 30px color-mix(in srgb, var(--ink) 10%, transparent);
+
+  /* ---- Z ---------------------------------------------------- */
+  --z-cursor: 9999;
+  --z-nav: 100;
+}
+
+/* Honour reduced motion globally as a safety net; JS gates the rest. */
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --dur-fast: 0.01ms;
+    --dur-mid: 0.01ms;
+    --dur-slow: 0.01ms;
+  }
+}

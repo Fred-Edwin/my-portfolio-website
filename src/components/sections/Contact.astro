@@ -1,0 +1,175 @@
+---
+/**
+ * Contact — CALM, with confidence. The firm, warm handshake at the end.
+ *
+ * Option A (locked): direct contact, no prominent form. A confident invitation
+ * line in large display serif — bookending the hero's opening serif statement
+ * (the site opens and closes on a big serif line) — then the contact details
+ * themselves: email primary + largest, LinkedIn, location stated plainly.
+ *
+ * The site's final hand-drawn mark: an ink-blue underline under the email,
+ * drawing itself on as it scrolls into view — mirroring the hero's stroke, so
+ * warmth bookends the visit. Hover states physical (subtle ink-blue shift).
+ * No phone number here (it lives discreetly in the footer).
+ */
+import InkStroke from "../InkStroke.astro";
+import { SITE } from "../../lib/site";
+
+const linkedinHandle = "/in/edwinfred-kamau";
+---
+
+<section id="contact" class="contact section" data-contact aria-labelledby="contact-h">
+  <div class="contact__inner container">
+    <p class="contact__eyebrow label" data-c>Contact</p>
+
+    <h2 id="contact-h" class="contact__title serif" data-c>Let's talk.</h2>
+
+    <p class="contact__lead" data-c>
+      If you're running a growing business and you can feel the operations
+      starting to strain — or you're building something and want a partner
+      who'll actually show up and understand it — I want to hear from you.
+    </p>
+
+    <ul class="contact__methods">
+      <li class="contact__method contact__method--email" data-c>
+        <a class="contact__email" href={`mailto:${SITE.email}`}>
+          <InkStroke variant="underline" trigger="scroll">{SITE.email}</InkStroke>
+        </a>
+      </li>
+
+      <li class="contact__method" data-c>
+        <span class="contact__key label">LinkedIn</span>
+        <a class="contact__link" href={SITE.linkedin} target="_blank" rel="me noopener">
+          {linkedinHandle}
+          <span class="contact__arrow" aria-hidden="true">→</span>
+        </a>
+      </li>
+
+      <li class="contact__method contact__method--loc" data-c>
+        <span class="contact__key label">Where</span>
+        <span class="contact__loc">Based in Nairobi — working with businesses across Kenya.</span>
+      </li>
+    </ul>
+  </div>
+</section>
+
+<style>
+  .contact__eyebrow { margin-bottom: var(--space-l); }
+
+  /* The invitation — bookends the hero's opening serif line. */
+  .contact__title {
+    font-size: var(--step-4);
+    line-height: 0.98;
+    letter-spacing: -0.03em;
+    font-weight: 330;
+    margin: 0 0 var(--space-l);
+  }
+
+  /* Lead set in the serif reading face — warm, editorial, ties to About. */
+  .contact__lead {
+    font-family: var(--font-serif);
+    font-optical-sizing: auto;
+    font-variation-settings: "SOFT" var(--serif-soft), "WONK" 0;
+    font-weight: 360;
+    font-size: clamp(0.98rem, 0.92rem + 0.2vw, 1.06rem);
+    line-height: 1.42;
+    letter-spacing: -0.005em;
+    color: var(--ink);
+    max-width: 40ch;
+    margin: 0 0 var(--space-xl);
+  }
+
+  /* The contact details — anchored under a hairline (the grid motif), so the
+     "and here's how to reach me" reads as a deliberate block. */
+  .contact__methods {
+    list-style: none;
+    margin: 0;
+    padding: var(--space-l) 0 0;
+    border-top: 1px solid var(--hairline);
+    display: grid;
+    gap: var(--space-m);
+  }
+  .contact__method { display: flex; flex-direction: column; gap: var(--space-2xs); }
+
+  /* Email — primary + largest. Set in the serif as a written invitation, and
+     carrying the site's final hand-drawn ink underline. */
+  .contact__method--email { margin-bottom: var(--space-s); }
+  .contact__email {
+    display: inline-block;
+    width: max-content;
+    max-width: 100%;
+    font-family: var(--font-serif);
+    font-optical-sizing: auto;
+    font-variation-settings: "SOFT" var(--serif-soft), "WONK" 0;
+    font-size: clamp(1.2rem, 1.0rem + 0.65vw, 1.52rem);
+    font-weight: 360;
+    letter-spacing: -0.02em;
+    line-height: 1.05;
+    color: var(--ink);
+    transition: color var(--dur-fast) var(--ease-physical);
+  }
+  .contact__email:hover { color: var(--ink-blue); }
+  .contact__email :global(.ink-stroke) { white-space: nowrap; }
+
+  .contact__key { color: var(--grey-soft); }
+  .contact__link {
+    width: max-content;
+    font-size: var(--step-1);
+    color: var(--ink);
+    display: inline-flex;
+    align-items: baseline;
+    gap: 0.4em;
+    transition: color var(--dur-fast) var(--ease-physical);
+  }
+  .contact__link:hover { color: var(--ink-blue); }
+  .contact__arrow { transition: transform var(--dur-fast) var(--ease-physical); }
+  .contact__link:hover .contact__arrow { transform: translateX(5px); }
+
+  .contact__loc { font-size: var(--step-1); color: var(--grey); max-width: 34ch; line-height: 1.4; }
+
+  /* Desktop: asymmetric two-column, left-leaning. The big serif line stands
+     alone; the invitation + details share the lower band, aligned. */
+  @media (min-width: 860px) {
+    .contact__inner {
+      display: grid;
+      grid-template-columns: minmax(0, 1.05fr) minmax(0, 0.95fr);
+      column-gap: clamp(3rem, 1rem + 7vw, 8rem);
+      row-gap: 0;
+      align-items: start;
+    }
+    .contact__eyebrow { grid-column: 1 / -1; }
+    .contact__title { grid-column: 1; grid-row: 2; margin-bottom: 0; }
+    .contact__lead { grid-column: 1; grid-row: 3; margin: var(--space-l) 0 0; }
+    /* details align beside the invitation, not the headline — a connected
+       lower block, with negative space beside the big serif line above. */
+    .contact__methods { grid-column: 2; grid-row: 2 / 4; align-self: start; }
+  }
+</style>
+
+<script>
+  // Calm settle-up on scroll (About-style). The email underline draws itself
+  // via InkStroke (trigger=scroll) — the site's final hand mark.
+  async function initContact() {
+    const section = document.querySelector<HTMLElement>("[data-contact]");
+    if (!section || section.dataset.init !== undefined) return;
+    section.dataset.init = "";
+
+    const { responsive, prefersReducedMotion, gsap, ScrollTrigger } =
+      await import("../../lib/motion");
+    if (prefersReducedMotion()) return;
+
+    responsive(() => {
+      const items = section.querySelectorAll("[data-c]");
+      gsap.fromTo(items,
+        { opacity: 0, y: 22 },
+        {
+          opacity: 1, y: 0, duration: 1, ease: "settle", stagger: 0.08,
+          scrollTrigger: { trigger: section, start: "top 78%" },
+        }
+      );
+      ScrollTrigger.refresh();
+    });
+  }
+  initContact();
+  document.addEventListener("astro:page-load", initContact);
+</script>

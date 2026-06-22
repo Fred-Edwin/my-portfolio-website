@@ -1,0 +1,65 @@
+---
+/**
+ * Hairline — the underlying grid made visible. A thin ink-blue rule,
+ * a recurring divider across sections. Optionally draws itself across
+ * left-to-right on scroll (Services ledger; section tops).
+ *
+ * draw : boolean — animate across on scroll-in (mechanical-straight ease).
+ */
+interface Props {
+  draw?: boolean;
+  class?: string;
+}
+const { draw = false, class: className = "" } = Astro.props;
+---
+
+<div
+  class:list={["hairline", draw && "hairline--draw", className]}
+  data-hairline-draw={draw ? "" : null}
+  role="separator"
+  aria-hidden="true"
+>
+</div>
+
+<style>
+  .hairline {
+    height: 1px;
+    width: 100%;
+    background: var(--hairline);
+    transform-origin: left center;
+  }
+  .hairline--draw {
+    transform: scaleX(0);
+    transition: transform var(--dur-slow) var(--ease-draw);
+  }
+  .hairline--draw[data-drawn] { transform: scaleX(1); }
+
+  @media (prefers-reduced-motion: reduce) {
+    .hairline--draw { transform: scaleX(1); transition: none; }
+  }
+</style>
+
+<script>
+  function initHairlines() {
+    const lines = document.querySelectorAll<HTMLElement>(
+      ".hairline--draw:not([data-init])"
+    );
+    lines.forEach((el) => {
+      el.setAttribute("data-init", "");
+      const io = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((entry) => {
+            if (entry.isIntersecting) {
+              el.setAttribute("data-drawn", "");
+              io.unobserve(entry.target);
+            }
+          });
+        },
+        { threshold: 1, rootMargin: "0px 0px -6% 0px" }
+      );
+      io.observe(el);
+    });
+  }
+  initHairlines();
+  document.addEventListener("astro:page-load", initHairlines);
+</script>
