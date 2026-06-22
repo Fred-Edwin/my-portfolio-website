@@ -7,12 +7,35 @@ import Work from "../components/sections/Work.astro";
 import Blog from "../components/sections/Blog.astro";
 import Contact from "../components/sections/Contact.astro";
 import Hairline from "../components/Hairline.astro";
+import { SITE } from "../lib/site";
 
-// Heartbeat: Hero → About → Services → Work → Blog → Contact.
-// (Lobster Technologies is deferred — to be designed in a later pass.)
+const personSchema = {
+  "@context": "https://schema.org",
+  "@type": "Person",
+  name: SITE.name,
+  jobTitle: SITE.role,
+  description: SITE.tagline,
+  url: "https://edwinfredkamau.co.ke",
+  image: "https://edwinfredkamau.co.ke/og-image.png",
+  email: SITE.email,
+  address: {
+    "@type": "PostalAddress",
+    addressLocality: "Nairobi",
+    addressCountry: "KE",
+  },
+  worksFor: {
+    "@type": "Organization",
+    name: "Lobster Technologies",
+  },
+  sameAs: [SITE.linkedin, SITE.x, SITE.github],
+};
 ---
 
-<BaseLayout>
+<BaseLayout
+  title={`${SITE.name} — Software & AI Engineer in Nairobi, Kenya`}
+  description={SITE.tagline}
+  schema={personSchema}
+>
   <Hero />
 
   <Hairline class="container" />

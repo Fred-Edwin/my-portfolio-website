@@ -4,11 +4,31 @@ import BlogEntries from "../../components/BlogEntries.astro";
 import Hairline from "../../components/Hairline.astro";
 import { posts, SERIES } from "../../lib/posts";
 import { SITE } from "../../lib/site";
+
+const breadcrumbSchema = {
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  itemListElement: [
+    {
+      "@type": "ListItem",
+      position: 1,
+      name: "Home",
+      item: "https://edwinfredkamau.co.ke",
+    },
+    {
+      "@type": "ListItem",
+      position: 2,
+      name: "Writing",
+      item: "https://edwinfredkamau.co.ke/blog",
+    },
+  ],
+};
 ---
 
 <BaseLayout
   title={`Writing — ${SITE.name}`}
   description="Field notes on building systems — lessons and mistakes from the software Edwinfred Kamau has shipped."
+  schema={breadcrumbSchema}
 >
   <section class="blogindex section" aria-labelledby="blogindex-h">
     <div class="blogindex__inner container">

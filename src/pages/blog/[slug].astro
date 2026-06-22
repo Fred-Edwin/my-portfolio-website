@@ -11,13 +11,66 @@ export function getStaticPaths() {
 const { slug } = Astro.params;
 const post = getPost(slug!)!;
 
-// Series navigation — prev/next by order in the series.
 const idx = posts.findIndex((p) => p.slug === slug);
 const prev = idx > 0 ? posts[idx - 1] : null;
 const next = idx < posts.length - 1 ? posts[idx + 1] : null;
+
+const postUrl = `https://edwinfredkamau.co.ke/blog/${post.slug}`;
+
+const blogPostingSchema = {
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  headline: post.title,
+  description: post.summary,
+  datePublished: post.dateISO,
+  dateModified: post.dateISO,
+  author: {
+    "@type": "Person",
+    name: SITE.name,
+    url: "https://edwinfredkamau.co.ke",
+  },
+  publisher: {
+    "@type": "Person",
+    name: SITE.name,
+    url: "https://edwinfredkamau.co.ke",
+  },
+  url: postUrl,
+  mainEntityOfPage: postUrl,
+  keywords: post.tag,
+  timeRequired: `PT${post.readMins}M`,
+};
+
+const breadcrumbSchema = {
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  itemListElement: [
+    {
+      "@type": "ListItem",
+      position: 1,
+      name: "Home",
+      item: "https://edwinfredkamau.co.ke",
+    },
+    {
+      "@type": "ListItem",
+      position: 2,
+      name: "Writing",
+      item: "https://edwinfredkamau.co.ke/blog",
+    },
+    {
+      "@type": "ListItem",
+      position: 3,
+      name: post.title,
+      item: postUrl,
+    },
+  ],
+};
 ---
 
-<BaseLayout title={`${post.title} — ${SITE.name}`} description={post.summary}>
+<BaseLayout
+  title={`${post.title} — ${SITE.name}`}
+  description={post.summary}
+  schema={[blogPostingSchema, breadcrumbSchema]}
+>
   <!-- reading-progress line — thin ink-blue, fills as you scroll -->
   <div class="post__progress" aria-hidden="true">
     <span class="post__progress-fill" data-progress></span>

@@ -19,14 +19,18 @@ interface Props {
   description?: string;
   /** chrome=false strips Nav/Footer (used by the bare styleguide). */
   chrome?: boolean;
+  /** JSON-LD schema object(s) — pass from individual pages. */
+  schema?: object | object[];
 }
 const {
-  title = `${SITE.name} — ${SITE.role}`,
+  title = `${SITE.name} — Software & AI Engineer in Nairobi, Kenya`,
   description = SITE.tagline,
   chrome = true,
+  schema,
 } = Astro.props;
 const canonical = new URL(Astro.url.pathname, Astro.site).toString();
 const ogImage = new URL("/og-image.png", Astro.site).toString();
+const schemaJson = schema ? JSON.stringify(Array.isArray(schema) ? schema : [schema]) : null;
 ---
 
 <!doctype html>
@@ -42,6 +46,7 @@ const ogImage = new URL("/og-image.png", Astro.site).toString();
 
     <!-- Open Graph -->
     <meta property="og:type" content="website" />
+    <meta property="og:site_name" content={SITE.name} />
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
     <meta property="og:url" content={canonical} />
@@ -51,6 +56,9 @@ const ogImage = new URL("/og-image.png", Astro.site).toString();
     <meta property="og:image:alt" content={`${SITE.name} — ${SITE.role}`} />
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:image" content={ogImage} />
+
+    <!-- JSON-LD structured data -->
+    {schemaJson && <script type="application/ld+json" set:html={schemaJson} />}
   </head>
   <body>
     <a class="skip-link" href="#main">Skip to content</a>

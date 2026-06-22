@@ -3,7 +3,7 @@ export const SITE = {
   name: "Edwinfred Kamau",
   role: "Software & AI Engineer",
   tagline:
-    "I build enterprise software and AI agents that give growing businesses back the joy of running them.",
+    "Software engineer and AI engineer based in Nairobi. I design enterprise systems and AI agents for growing businesses across East Africa.",
   location: "Nairobi, Kenya",
   email: "edwinfredofficial@gmail.com",
   phone: "+254113176613", // discreet footer use only — not the primary contact
