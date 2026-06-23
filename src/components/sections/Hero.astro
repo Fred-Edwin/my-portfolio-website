@@ -102,9 +102,15 @@ import { SITE } from "../../lib/site";
     white-space: normal;
   }
 
-  /* "builder" carries the only accent ink in the hero. */
+  /* "build" carries the only accent ink in the hero. */
   .hero__build { color: var(--ink-blue); }
-  .hero__build :global(.ink-stroke) { padding-inline: 0.04em; }
+  .hero__build :global(.ink-stroke) { padding-inline: 0.15em; }
+  .hero__build :global(.ink-stroke__svg) {
+    left: -18%;
+    top: -30%;
+    width: 136%;
+    height: 160%;
+  }
 
   /* word-level reveal targets. Promote to their own layer for
      composited (stutter-free) transform + opacity animation. */
