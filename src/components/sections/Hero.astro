@@ -1,48 +1,84 @@
 ---
 /**
- * Hero — WOW. The one bold idea as a single sequence:
- *   hold on empty paper → statement assembles line-by-line (heavy ease)
- *   → held beat → ink circle draws itself around "joy".
+ * Hero — WOW. Asymmetric: the statement assembles on the left while a real
+ * product device bleeds in from the right edge (cropped by the viewport) —
+ * proof is in frame from the first second, not three sections down.
  *
- * Type is the payload; no imagery. Left-aligned, asymmetric.
- * Line breaks are hand-set per breakpoint via the .br helpers.
+ * Sequence: hold on empty paper → statement assembles line-by-line (heavy
+ * ease) → ink circle draws around "build" → device rises + settles in →
+ * actions arrive.
+ *
+ * Desktop: text left / device right, device clipped at the right edge.
+ * Mobile:  stacks — statement, then the device sits below at full size
+ *          (no edge-bleed on narrow screens).
  */
+import { Image } from "astro:assets";
 import InkStroke from "../InkStroke.astro";
 import { SITE } from "../../lib/site";
 
-// Hand-set words. Each <span class="word"> is animated in sequence.
-// The statement is authored as lines so we control breaks precisely.
+// Photoreal, transparent-PNG device mockups (mockupphone.com). They are
+// their own frames — dropped straight onto the paper, no CSS bezel.
+// Hero scene: the Wendo analytics laptop (lead) with the Wendo order phone
+// leaning in front — one product, "desktop + mobile" in one physical scene.
+import wendoLaptop from "../../assets/img/hero-wendo-laptop.png";
+import wendoMenu from "../../assets/img/hero-wendo-phone.png";
 ---
 
 <section class="hero" data-hero aria-label="Introduction">
   <div class="hero__inner">
-    <p class="hero__name label" data-hero-name>{SITE.name} — Software & AI Engineer in Nairobi, Kenya</p>
+    <div class="hero__copy">
+      <p class="hero__name label" data-hero-name>{SITE.name} — Software & AI Engineer in Nairobi, Kenya</p>
 
-    <h1 class="hero__statement serif" data-hero-statement>
-      <span class="hero__line">
-        <span class="word">I</span> <span class="word">design</span>
-        <span class="word">and</span>
-        <span class="word hero__build">
-          <InkStroke variant="circle" trigger="load" delay={4} around={true}>build</InkStroke>
+      <h1 class="hero__statement serif" data-hero-statement>
+        <span class="hero__line">
+          <span class="word">I</span> <span class="word">design</span>
+          <span class="word">and</span>
+          <span class="word hero__build">
+            <InkStroke variant="circle" trigger="load" delay={3.4} around={true}>build</InkStroke>
+          </span>
+          <span class="word">enterprise</span>
         </span>
-        <span class="word">enterprise</span> <span class="word">systems</span>
-      </span>
-      <span class="hero__line">
-        <span class="word">and</span> <span class="word">AI</span>
-        <span class="word">agents</span> <span class="word">for</span>
-        <span class="word">growing</span> <span class="word">businesses</span>
-      </span>
-      <span class="hero__line">
-        <span class="word">across</span> <span class="word">East</span> <span class="word">Africa.</span>
-      </span>
-    </h1>
+        <span class="hero__line">
+          <span class="word">systems</span> <span class="word">and</span>
+          <span class="word">AI</span> <span class="word">agents</span>
+        </span>
+        <span class="hero__line">
+          <span class="word">for</span> <span class="word">growing</span>
+          <span class="word">businesses</span>
+        </span>
+        <span class="hero__line">
+          <span class="word">across</span> <span class="word">East</span> <span class="word">Africa.</span>
+        </span>
+      </h1>
 
-    <div class="hero__actions" data-hero-actions>
-      <a class="hero__cta" href="#work">
-        See the work
-        <span class="hero__cta-arrow" aria-hidden="true">→</span>
-      </a>
-      <a class="hero__link" href="#contact">Get in touch</a>
+      <div class="hero__actions" data-hero-actions>
+        <a class="hero__cta" href="#work">
+          See the work
+          <span class="hero__cta-arrow" aria-hidden="true">→</span>
+        </a>
+        <a class="hero__link" href="#contact">Get in touch</a>
+      </div>
+    </div>
+
+    <!-- Real product, bleeding in from the right: the Wendo analytics laptop
+         (lead) with the Wendo order phone leaning in front of it. -->
+    <div class="hero__media" data-hero-media aria-hidden="true">
+      <div class="hero__device">
+        <Image
+          class="hero__laptop"
+          src={wendoLaptop}
+          alt="Wendo RMS — the operations analytics dashboard"
+          widths={[720, 1100, 1600]}
+          sizes="(max-width: 880px) 92vw, 40rem"
+        />
+        <Image
+          class="hero__phone"
+          src={wendoMenu}
+          alt="Wendo RMS — taking an order on the floor"
+          widths={[240, 360, 480]}
+          sizes="(max-width: 880px) 24vw, 9rem"
+        />
+      </div>
     </div>
   </div>
 </section>
@@ -53,30 +89,26 @@ import { SITE } from "../../lib/site";
     display: flex;
     align-items: center;
     position: relative;
-    /* full-bleed, but share the page gutter so it lines up with every
-       other section's left/right inset */
+    overflow: hidden; /* the device bleeds past the right edge; clip it */
     padding-inline: var(--gutter);
     padding-block: var(--space-xl);
   }
-  /* On phones the viewport is tall and narrow — centre leaves big empty
-     bands. Anchor content toward the upper third and let the headline
-     grow so it fills the screen instead of floating. */
-  @media (max-width: 600px) {
-    .hero {
-      align-items: flex-start;
-      padding-top: clamp(5rem, 22vh, 11rem);
-      min-height: 92svh;
-    }
-  }
+
   .hero__inner {
     width: 100%;
-    max-width: var(--content-inner);   /* matches the capped content width */
+    max-width: var(--content-inner);
     margin-inline: auto;
     display: flex;
     flex-direction: column;
-    align-items: center;
-    text-align: center;
-    gap: clamp(1.75rem, 1rem + 2.5vw, 3.25rem);
+    gap: clamp(2.5rem, 1.5rem + 4vw, 4rem);
+  }
+
+  .hero__copy {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    text-align: left;
+    gap: clamp(1.5rem, 1rem + 2vw, 2.75rem);
   }
 
   .hero__name {
@@ -84,13 +116,11 @@ import { SITE } from "../../lib/site";
     /* assembled-in by JS, but readable if JS never runs */
   }
 
-  /* The statement reads like a sentence written across the screen:
-     two balanced lines that span the full central width — no max-width
-     chokehold, no empty right side. Line breaks are hand-set in markup;
-     the type is sized so each line reaches near the right edge. */
+  /* The statement reads like a sentence written across the screen.
+     Left-aligned, hand-set breaks; sized to fill the copy column. */
   .hero__statement {
-    font-size: clamp(1.95rem, 1rem + 2.6vw, 3.4rem);
-    line-height: 1.06;
+    font-size: clamp(1.85rem, 1rem + 2.4vw, 3.1rem);
+    line-height: 1.07;
     letter-spacing: -0.02em;
     font-weight: 340;
     margin: 0;
@@ -128,7 +158,6 @@ import { SITE } from "../../lib/site";
   .hero__actions {
     display: flex;
     align-items: center;
-    justify-content: center;
     gap: var(--space-l);
     flex-wrap: wrap;
   }
@@ -156,25 +185,104 @@ import { SITE } from "../../lib/site";
   }
   .hero__link:hover { color: var(--ink); }
 
-  /* On very narrow phones, allow the long hand-set lines to wrap so
-     nothing overflows; the assembly still reads as writing. */
+  /* --- The media: transparent device mockups, no CSS frame ----------- */
+  .hero__media {
+    width: 100%;
+    will-change: transform, opacity;
+  }
+  /* The Wendo laptop leads (landscape); the Wendo order phone leans in
+     front at the lower-right. The device box is sized off the LAPTOP. */
+  .hero__device {
+    position: relative;
+    width: min(96%, 32rem);
+    margin-inline: auto;
+  }
+  .hero__laptop {
+    display: block;
+    width: 100%;
+    height: auto;
+    position: relative;
+    z-index: 1;
+    /* drop-shadow follows the transparent silhouette (not a box) */
+    filter: drop-shadow(0 22px 40px color-mix(in srgb, var(--ink) 20%, transparent));
+  }
+  /* the phone stands clearly IN FRONT of the laptop: a stronger, opposite
+     tilt (different plane) + it overhangs the laptop's bottom edge, and a
+     deeper shadow so it reads as the nearer object — not fused to the screen. */
+  .hero__phone {
+    position: absolute;
+    z-index: 2;
+    right: 1%;
+    bottom: -14%;
+    width: 26%;
+    height: auto;
+    transform: rotate(7deg);
+    filter:
+      drop-shadow(0 4px 8px color-mix(in srgb, var(--ink) 22%, transparent))
+      drop-shadow(0 26px 40px color-mix(in srgb, var(--ink) 32%, transparent));
+  }
+
+  /* --- Desktop: text left, device bleeds off the right edge ---------- */
+  @media (min-width: 880px) {
+    .hero__inner {
+      flex-direction: row;
+      align-items: center;
+      gap: clamp(2rem, -2rem + 8vw, 6rem);
+    }
+    .hero__copy {
+      flex: 1 1 52%;
+      min-width: 0;
+    }
+    .hero__media {
+      flex: 1 1 48%;
+      min-width: 0;
+      position: relative;
+    }
+    /* the laptop sits in the right half and crops moderately (~15% of its
+       right bezel) off the viewport edge — content stays fully readable. */
+    .hero__device {
+      width: clamp(27rem, 18rem + 24vw, 46rem);
+      margin-inline: 0;
+      margin-left: auto;
+      margin-right: calc(-1 * var(--gutter) + 1.5rem);
+    }
+  }
+
+  /* On very wide screens the layout centres (content-max), so the laptop
+     would pull away from the edge. Cap how far right it can sit. */
+  @media (min-width: 1600px) {
+    .hero__device { margin-right: 0; }
+  }
+
+  /* --- Phone: stack, statement first, device below at full size ----- */
   @media (max-width: 600px) {
+    .hero {
+      align-items: flex-start;
+      padding-top: clamp(4.5rem, 18vh, 9rem);
+      min-height: auto;
+    }
     .hero__statement { text-wrap: pretty; }
     .hero__line { display: inline; }
+    /* laptop sits below the copy, centred and full — phone leans in front
+       and overhangs the bottom edge. Extra bottom room so it isn't clipped. */
+    .hero__device { width: min(94%, 26rem); margin-bottom: var(--space-l); }
+    .hero__phone { width: 27%; right: 2%; bottom: -12%; }
   }
 
   /* Pre-animation state: hide until JS arms the timeline. If JS is off
      or reduced-motion, a fallback below reveals everything instantly. */
   [data-hero][data-armed] .word,
   [data-hero][data-armed] .hero__name,
-  [data-hero][data-armed] .hero__actions {
+  [data-hero][data-armed] .hero__actions,
+  [data-hero][data-armed] .hero__media {
     opacity: 0;
   }
 
   @media (prefers-reduced-motion: reduce) {
     [data-hero][data-armed] .word,
     [data-hero][data-armed] .hero__name,
-    [data-hero][data-armed] .hero__actions { opacity: 1; }
+    [data-hero][data-armed] .hero__actions,
+    [data-hero][data-armed] .hero__media { opacity: 1; }
   }
 </style>
 
@@ -187,20 +295,41 @@ import { SITE } from "../../lib/site";
 
     const { responsive, prefersReducedMotion, gsap } = await import("../../lib/motion");
 
-    // Arm: switch to the hidden pre-animation state (only now, so no-JS
-    // visitors keep a fully visible hero).
     hero.setAttribute("data-armed", "");
 
     if (prefersReducedMotion()) {
-      hero.querySelectorAll<HTMLElement>(".word, .hero__name, .hero__actions")
+      hero.querySelectorAll<HTMLElement>(".word, .hero__name, .hero__actions, .hero__media")
         .forEach((el) => (el.style.opacity = "1"));
       return;
     }
+
+    // Repeat visits within a session skip the long first-run choreography
+    // and snap to the resting state — friction-free for return scans.
+    let seen = false;
+    try { seen = sessionStorage.getItem("hero-seen") === "1"; } catch {}
 
     responsive((_ctx, { isMobile }) => {
       const words = hero.querySelectorAll(".word");
       const name = hero.querySelector(".hero__name");
       const actions = hero.querySelector(".hero__actions");
+      const media = hero.querySelector(".hero__media");
+      const laptop = hero.querySelector(".hero__laptop");
+      const phone = hero.querySelector(".hero__phone");
+
+      if (seen) {
+        gsap.set([name, actions, media, laptop], { opacity: 1, y: 0 });
+        gsap.set(phone, { opacity: 1, x: 0, y: 0, rotation: 7 });
+        gsap.set(words, { opacity: 1, y: 0, filter: "blur(0px)" });
+        // the ink circle draws on its own load-delay; on a repeat visit
+        // everything else is already shown, so draw it at once too.
+        hero.querySelector(".hero__build .ink-stroke")?.setAttribute("data-drawn", "");
+        return;
+      }
+
+      // lock the device children hidden up front (the wrapper reveals to
+      // opacity 1 below), so nothing flashes before each beat tweens in.
+      gsap.set(laptop, { opacity: 0 });
+      gsap.set(phone, { opacity: 0 });
 
       const tl = gsap.timeline({ delay: isMobile ? 0.3 : 0.55 });
 
@@ -209,43 +338,58 @@ import { SITE } from "../../lib/site";
         opacity: 1, y: 0, duration: 0.7, ease: "settle",
       });
 
-      // 2. statement flows into place — words rise and settle in a
-      //    continuous wave. Two keys to silk:
-      //    (a) animate `y` in px with force3D so each word stays on its
-      //        own GPU layer (composited, not repainted) — no stutter.
-      //    (b) heavily overlapped stagger so words flow INTO each other
-      //        rather than each popping in discretely.
-      //    Blur runs as a shorter, separate tween so it clears early and
-      //    doesn't fight the transform for the whole duration.
+      // 2. statement flows into place — words rise + settle in a wave,
+      //    blur clearing quickly under the rise (composited per word).
       tl.fromTo(words,
         { opacity: 0, y: "0.5em", force3D: true },
         {
           opacity: 1, y: "0em", force3D: true,
           duration: isMobile ? 0.9 : 1.05,
           ease: "power3.out",
-          stagger: { each: isMobile ? 0.085 : 0.11, ease: "none" },
+          stagger: { each: isMobile ? 0.08 : 0.1, ease: "none" },
         },
         "-=0.2"
       );
-      // blur clears quickly per word, layered under the rise above
       tl.fromTo(words,
         { filter: "blur(5px)" },
         {
           filter: "blur(0px)",
           duration: isMobile ? 0.45 : 0.5,
           ease: "power2.out",
-          stagger: { each: isMobile ? 0.085 : 0.11, ease: "none" },
+          stagger: { each: isMobile ? 0.08 : 0.1, ease: "none" },
         },
-        "<" // start together with the rise
+        "<"
       );
 
-      // 3. held beat, then actions arrive
-      //    (the ink circle draws itself via InkStroke trigger=load delay)
+      // 3. the device scene wakes into frame as two beats:
+      //    (a) the laptop rises + settles — the anchor lands first
+      gsap.set(media, { opacity: 1 }); // wrapper just gates the children
+      tl.fromTo(laptop,
+        { opacity: 0, y: 60, scale: 1.05 },
+        { opacity: 1, y: 0, scale: 1, duration: 1.25, ease: "settle" },
+        isMobile ? "-=0.3" : "-=0.75"
+      );
+      //    (b) the phone leans in just after — slides up from lower-right
+      //        with extra tilt that settles into its resting (7deg) angle.
+      tl.fromTo(phone,
+        { opacity: 0, x: 30, y: 44, rotation: 16, scale: 0.95 },
+        { opacity: 1, x: 0, y: 0, rotation: 7, scale: 1, duration: 0.95, ease: "settle" },
+        "-=0.7"
+      );
+
+      // 4. held beat, then actions arrive (ink circle draws via InkStroke).
       tl.fromTo(actions,
         { opacity: 0, y: 10 },
         { opacity: 1, y: 0, duration: 0.7, ease: "settle" },
-        "+=0.35"
+        "-=0.5"
       );
+
+      tl.eventCallback("onComplete", () => {
+        try { sessionStorage.setItem("hero-seen", "1"); } catch {}
+        // drop will-change once the choreography is done
+        gsap.set(words, { clearProps: "willChange" });
+        if (media) (media as HTMLElement).style.willChange = "auto";
+      });
     });
   }
 

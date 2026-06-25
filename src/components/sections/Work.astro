@@ -13,17 +13,18 @@
  *
  * Copy from the real PRDs — only hard before/after METRICS remain [CONFIRM].
  */
+import { Image } from "astro:assets";
 import InkStroke from "../InkStroke.astro";
-import BrowserFrame from "../BrowserFrame.astro";
-import PhoneFrame from "../PhoneFrame.astro";
 
-import wendoDesktop from "../../assets/img/wendo-rms-login-desktop.png";
-import wendoMenu from "../../assets/img/wendo-rms-menu-mobile.jpeg";
-import washanDash from "../../assets/img/washan-groceries-dashboard-mobile.jpeg";
-import washanLogin from "../../assets/img/washan-groceries-login.jpeg";
-import wendoSite from "../../assets/img/wendo-website-hero.png";
-import sustainSite from "../../assets/img/sustainability-institute-hero.png";
-import dareSite from "../../assets/img/sustainability-institute-2.png"; // [CONFIRM] this is the Dare to Aspire site (content matches its mission); rename file when convenient
+// Transparent, pre-framed mockups (mockupphone.com / browser shots) — they
+// carry their own chrome, so they drop straight onto the paper, no CSS frame.
+import wendoBrowser from "../../assets/img/work-wendo-browser.png";
+import wendoPhone from "../../assets/img/work-wendo-phone.png";
+import washanLogin from "../../assets/img/work-washan-login.png";
+import washanAngled from "../../assets/img/work-washan-angled.png";
+import wendoSite from "../../assets/img/work-site-wendo.png";
+import sustainSite from "../../assets/img/work-site-sustainability.png";
+import dareSite from "../../assets/img/work-site-dare.png";
 
 // --- Flagship case studies ------------------------------------------------
 const flagships = [
@@ -39,7 +40,7 @@ const flagships = [
     afterLead: "Orders hit the stations the moment they're taken, and",
     afterWin: "the paper walk is gone for good.",
     afterTail:
-      "The floor and the kitchen finally move in sync, and the director runs both Nyeri branches — Kingz and Town — from a phone instead of a guess. Now eight build phases deep and still live. [CONFIRM a hard metric — avg prep time, orders/day, or onboarding time.]",
+      "The floor and the kitchen finally move in sync, and the director runs both Nyeri branches — Kingz and Town — from a phone instead of a guess. Now eight build phases deep and still live.",
   },
   {
     id: "washan",
@@ -100,41 +101,40 @@ const websites = [
           <p class="proj__tagline serif-italic">{p.tagline}</p>
         </div>
 
-        {/* 2. Imagery reveal — floating devices, no box (animates) */}
+        {/* 2. Imagery reveal — transparent mockups, no CSS frame (animates) */}
         <div class="proj__media" data-work-media>
           {p.id === "wendo" ? (
             <div class="mock mock--wendo">
-              <BrowserFrame
+              <Image
                 class="mock__screen"
-                src={wendoDesktop}
-                url="app.wendo-rms.co.ke"
-                alt="Wendo RMS — sign in"
+                src={wendoBrowser}
+                alt="Wendo RMS — the operations analytics dashboard"
                 widths={[640, 1000, 1400]}
                 sizes="(max-width: 760px) 84vw, 36rem"
               />
-              <PhoneFrame
+              <Image
                 class="mock__phone"
-                src={wendoMenu}
-                alt="Wendo RMS — taking an order on the floor"
+                src={wendoPhone}
+                alt="Wendo RMS — signing in on the floor"
                 widths={[240, 360, 480]}
                 sizes="(max-width: 760px) 26vw, 9rem"
               />
             </div>
           ) : (
             <div class="mock mock--washan">
-              <PhoneFrame
+              <Image
                 class="mock__phone-back"
                 src={washanLogin}
                 alt="Washan Groceries — staff sign in"
-                widths={[240, 360, 480]}
-                sizes="(max-width: 760px) 38vw, 12rem"
-              />
-              <PhoneFrame
-                class="mock__phone-front"
-                src={washanDash}
-                alt="Washan Groceries — the owner's dashboard"
                 widths={[260, 400, 540]}
-                sizes="(max-width: 760px) 46vw, 14rem"
+                sizes="(max-width: 760px) 42vw, 13rem"
+              />
+              <Image
+                class="mock__phone-front"
+                src={washanAngled}
+                alt="Washan Groceries — the dashboard on the move"
+                widths={[280, 440, 600]}
+                sizes="(max-width: 760px) 48vw, 15rem"
               />
             </div>
           )}
@@ -164,24 +164,21 @@ const websites = [
 
     {/* The website group — lighter, smaller, reads as range/productivity */}
     <section class="sites" aria-labelledby="sites-h">
-      <h3 id="sites-h" class="sites__head serif">And a handful of sites for businesses across Kenya and beyond.</h3>
+      <div class="sites__head-row">
+        <h3 id="sites-h" class="sites__head serif">And a handful of sites for businesses across Kenya and beyond.</h3>
+        <p class="sites__hint label" aria-hidden="true">Scroll <span class="sites__hint-arrow">→</span></p>
+      </div>
       <ul class="sites__grid">
         {websites.map((s) => (
           <li class="site" data-beat>
             <a class="site__shot" href={s.url} target="_blank" rel="noopener noreferrer" aria-label={`${s.name} — visit site`}>
-              {s.img ? (
-                <BrowserFrame
-                  src={s.img}
-                  url={s.host}
-                  alt={`${s.name} — website`}
-                  widths={[420, 640, 900]}
-                  sizes="(max-width: 760px) 90vw, 30vw"
-                />
-              ) : (
-                <span class="site__placeholder">
-                  <span class="label">Screenshot · coming</span>
-                </span>
-              )}
+              <Image
+                class="site__img"
+                src={s.img}
+                alt={`${s.name} — website`}
+                widths={[640, 900, 1280]}
+                sizes="(max-width: 760px) 78vw, 56vw"
+              />
             </a>
             <a class="site__name serif" href={s.url} target="_blank" rel="noopener noreferrer">
               {s.name}
@@ -230,11 +227,8 @@ const websites = [
     max-width: 40ch;
   }
 
-  /* --- Media: two separate floating devices, gently tilted ---------- */
+  /* --- Media: transparent mockups, no CSS frame, gently tilted ------- */
   .proj__media {
-    --shadow-float:
-      0 8px 18px color-mix(in srgb, var(--ink) 9%, transparent),
-      0 34px 60px color-mix(in srgb, var(--ink) 15%, transparent);
     position: relative;
     margin: var(--space-m) 0 var(--space-2xl);
     will-change: transform, opacity;
@@ -243,35 +237,54 @@ const websites = [
     position: relative;
     max-width: 34rem;
     margin-inline: auto;
+  }
+  /* drop-shadow follows each transparent silhouette (not a box) */
+  .mock :global(img) {
+    display: block;
+    height: auto;
+    filter: drop-shadow(0 16px 34px color-mix(in srgb, var(--ink) 18%, transparent));
+  }
+
+  /* Wendo: wide browser-framed analytics (1.5:1), set straight, with the
+     login phone leaning in front (tilted) at the lower-right corner. */
+  .mock--wendo {
+    max-width: 44rem;   /* ~30% larger than the shared 34rem base */
+    padding-bottom: 8%;
+  }
+  .mock--wendo :global(.mock__screen) {
+    display: block;
+    width: 100%;
+    /* straight — no tilt on the browser */
+  }
+  .mock--wendo :global(.mock__phone) {
+    position: absolute;
+    z-index: 2;
+    right: 3%;
+    bottom: 0;
+    width: 22%;
+    transform: rotate(5deg);
+    filter: drop-shadow(0 18px 30px color-mix(in srgb, var(--ink) 26%, transparent));
+  }
+
+  /* Washan: the angled dashboard leads (front, larger); the flat portrait
+     dashboard sits behind it, offset and dropped for depth. */
+  .mock--washan {
     display: flex;
     align-items: flex-start;
     justify-content: center;
-    gap: clamp(0.85rem, 2.5vw, 2.5rem);
+    gap: clamp(0.5rem, 2vw, 1.75rem);
+    padding-top: 4%;
+    max-width: 42rem;   /* match Wendo's weight — don't read as the runt */
   }
-  .proj__media :global(.bframe),
-  .proj__media :global(.phone) { box-shadow: var(--shadow-float); }
-
-  /* Wendo: wide laptop browser (2:1) + a realistically small order phone.
-     The browser is short, the phone is tall — so the phone must stay small
-     (~14%) or it dwarfs the laptop. It drops + tilts as a companion device. */
-  .mock--wendo .mock__screen {
-    flex: 0 0 70%;
-    transform: rotate(-2.5deg);
+  .mock--washan :global(.mock__phone-back) {
+    flex: 0 0 38%;
+    transform: rotate(-4deg) translateY(16%);
+    opacity: 0.96;
   }
-  .mock--wendo .mock__phone {
-    flex: 0 0 15%;
-    transform: rotate(4deg) translateY(36%);
-  }
-
-  /* Washan: two phones, similar real size, side by side with a clear gap;
-     opposite tilts, the second dropped for the stagger. */
-  .mock--washan .mock__phone-front {
-    flex: 0 0 43%;
-    transform: rotate(-3.5deg);
-  }
-  .mock--washan .mock__phone-back {
-    flex: 0 0 40%;
-    transform: rotate(4.5deg) translateY(14%);
+  .mock--washan :global(.mock__phone-front) {
+    flex: 0 0 46%;
+    transform: rotate(3deg);
+    z-index: 2;
   }
 
   /* Story beats — generous reading measure, calm. */
@@ -293,22 +306,65 @@ const websites = [
 
   /* --- The website group -------------------------------------------- */
   .sites { margin-top: var(--space-xl); }
+  .sites__head-row {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: var(--space-l);
+    margin: 0 0 var(--space-xl);
+  }
   .sites__head {
     font-size: var(--step-2);
     font-weight: 350;
     letter-spacing: -0.01em;
     max-width: 40ch;
     text-wrap: balance;
-    margin: 0 0 var(--space-xl);
+    margin: 0;
     color: var(--ink);
   }
+  /* Quiet "this scrolls" cue — the peeking next slide carries most of the
+     signal; this just confirms it. Arrow drifts to invite the gesture. */
+  .sites__hint {
+    flex: none;
+    color: var(--grey);
+    white-space: nowrap;
+    margin: 0;
+  }
+  .sites__hint-arrow {
+    display: inline-block;
+    animation: sites-hint-drift 1.8s var(--ease-physical) infinite;
+  }
+  @keyframes sites-hint-drift {
+    0%, 100% { transform: translateX(0); }
+    50% { transform: translateX(0.35em); }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .sites__hint-arrow { animation: none; }
+  }
+  /* Horizontal swipe carousel — one row, snap per shot, kept inside the
+     reading container so every slide (image AND its caption) shares the same
+     left edge as the heading. Scrollbar hidden visually but the track stays
+     operable + keyboard-focusable. Overflow is on the track, so there is no
+     page-level horizontal scrollbar. */
   .sites__grid {
     list-style: none;
     margin: 0;
-    padding: 0;
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: var(--space-xl);
+    /* leading/trailing padding gives the track breathing room at both ends
+       WITHOUT a negative-margin bleed — so every slide (image AND its text)
+       shares the same left origin as the heading above it. */
+    padding: 0.75rem 0;             /* vertical room for hover-lift + shadow */
+    display: flex;
+    gap: var(--space-l);
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    scroll-padding-left: 0;         /* slides snap to the container's left edge */
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;            /* Firefox */
+  }
+  .sites__grid::-webkit-scrollbar { display: none; }  /* Chrome/Safari */
+  .site {
+    flex: 0 0 78vw;
+    scroll-snap-align: start;
   }
   .site__shot {
     display: block;
@@ -316,16 +372,13 @@ const websites = [
     transition: transform var(--dur-fast) var(--ease-physical);
   }
   .site__shot:hover { transform: translateY(-3px); }
-  /* placeholder for the still-missing screenshot (Dare to Aspire) */
-  .site__placeholder {
-    display: grid;
-    place-items: center;
-    aspect-ratio: 16 / 10;
-    border: 1px dashed var(--grey-soft);
-    border-radius: 10px;
-    background: var(--paper-sunk);
+  .site__img {
+    display: block;
+    width: 100%;
+    height: auto;
+    /* the browser-framed mockup floats on the paper (its own chrome) */
+    filter: drop-shadow(0 10px 26px color-mix(in srgb, var(--ink) 14%, transparent));
   }
-  .site__placeholder .label { color: var(--grey-soft); }
   .site__name {
     display: inline-flex;
     align-items: baseline;
@@ -352,7 +405,11 @@ const websites = [
       gap: var(--space-m);
     }
     .proj__beat-key { padding-top: 0.45em; }
-    .sites__grid { grid-template-columns: repeat(3, 1fr); gap: var(--space-l); }
+
+    /* Larger slides on roomier screens — the next shot still peeks at the
+       right edge, signalling "swipe / scroll me". Capped so slides never get
+       cartoonishly wide on huge monitors. */
+    .site { flex-basis: clamp(34rem, 56vw, 50rem); }
   }
 
   /* --- Desktop: text one side, floating devices the other (alternating).

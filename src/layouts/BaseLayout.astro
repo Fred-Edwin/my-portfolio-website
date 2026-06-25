@@ -2,7 +2,7 @@
 /**
  * BaseLayout — the shell every page shares. Loads the design system,
  * self-hosted fonts (hashed + preloaded by Astro), sets <head> meta,
- * mounts Nav + Footer + the custom cursor.
+ * mounts Nav + Footer.
  */
 import "../styles/global.css";
 // Self-hosted variable fonts (full axis incl. italic for Fraunces).
@@ -69,13 +69,6 @@ const schemaJson = schema ? JSON.stringify(Array.isArray(schema) ? schema : [sch
       <slot />
     </main>
     {chrome && <Footer />}
-
-    <script>
-      import { initCursor } from "../lib/cursor";
-      const boot = () => initCursor();
-      boot();
-      document.addEventListener("astro:page-load", boot);
-    </script>
 
     <style>
       .skip-link {

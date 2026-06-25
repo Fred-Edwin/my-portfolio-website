@@ -28,3 +28,7 @@ dev.log
 
 # cloudflare
 .wrangler/
+
+# archived/unused image source files
+src/assets/img/_archive/
+

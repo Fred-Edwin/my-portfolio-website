@@ -29,7 +29,11 @@ html {
   background: var(--paper);
   color: var(--ink);
   font-family: var(--font-sans);
-  font-size: 100%;
+  /* Global scale: the whole rem-based system (type, spacing, gutters,
+     measures) is sized down to ~80% so the layout reads calm and well-
+     proportioned — the "browser at 80% zoom" look — with every ratio
+     preserved. One lever, uniform effect. */
+  font-size: 80%;
   scroll-behavior: smooth;
 }
 @media (prefers-reduced-motion: reduce) {
@@ -96,34 +100,6 @@ body {
 
 /* Accent word — the scarce ink-blue key word --------------- */
 .accent { color: var(--ink-blue); }
-
-/* Custom cursor ring (pointer:fine only; created by cursor.ts) ---- */
-.cursor-ring {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 26px;
-  height: 26px;
-  border: 1.5px solid var(--ink-blue);
-  border-radius: 50%;
-  pointer-events: none;
-  z-index: var(--z-cursor);
-  opacity: 0;
-  mix-blend-mode: multiply;
-  transition:
-    opacity var(--dur-fast) var(--ease-physical),
-    width var(--dur-fast) var(--ease-physical),
-    height var(--dur-fast) var(--ease-physical),
-    background var(--dur-fast) var(--ease-physical),
-    border-color var(--dur-fast) var(--ease-physical);
-  will-change: transform;
-}
-.cursor-ring--grow {
-  width: 52px;
-  height: 52px;
-  background: color-mix(in srgb, var(--ink-blue) 8%, transparent);
-  border-color: var(--ink-blue-soft);
-}
 
 /* Visually-hidden (a11y) ----------------------------------- */
 .vh {

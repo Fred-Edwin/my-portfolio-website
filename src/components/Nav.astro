@@ -2,12 +2,17 @@
 /**
  * Nav — quiet, top-left wordmark + restrained links. Calm by default;
  * a thin hairline appears under it once you scroll off the hero.
+ *
+ * On scroll, the link for the section currently in view is marked
+ * aria-current="true" and its underline holds (IntersectionObserver).
+ * On phones the links collapse into a minimal disclosure menu — every
+ * destination stays reachable (no link is dropped).
  */
 const links = [
-  { label: "Work", href: "/#work" },
-  { label: "About", href: "/#about" },
-  { label: "Blog", href: "/blog" },
-  { label: "Contact", href: "/#contact" },
+  { label: "Work", href: "/#work", id: "work" },
+  { label: "About", href: "/#about", id: "about" },
+  { label: "Blog", href: "/blog", id: "blog" },
+  { label: "Contact", href: "/#contact", id: "contact" },
 ];
 ---
 
@@ -16,9 +21,20 @@ const links = [
     <a class="nav__mark" href="/" aria-label="Edwinfred Kamau — home">
       <span class="serif">Edwinfred Kamau</span>
     </a>
-    <nav class="nav__links" aria-label="Primary">
+
+    <button
+      class="nav__toggle"
+      data-nav-toggle
+      aria-label="Open menu"
+      aria-expanded="false"
+      aria-controls="nav-menu"
+    >
+      <span class="nav__toggle-bars" aria-hidden="true"><i></i><i></i></span>
+    </button>
+
+    <nav class="nav__links" id="nav-menu" aria-label="Primary">
       {links.map((l) => (
-        <a class="nav__link label" href={l.href}>{l.label}</a>
+        <a class="nav__link label" href={l.href} data-nav-link={l.id}>{l.label}</a>
       ))}
     </nav>
   </div>
@@ -72,23 +88,166 @@ const links = [
   }
   .nav__link:hover { color: var(--ink-blue); }
   .nav__link:hover::after { transform: scaleX(1); }
+  /* current section — underline holds, colour shifts to ink-blue */
+  .nav__link[aria-current="true"] { color: var(--ink-blue); }
+  .nav__link[aria-current="true"]::after { transform: scaleX(1); }
 
-  @media (max-width: 540px) {
-    .nav__links { gap: var(--space-m); }
-    .nav__link:nth-child(2) { display: none; } /* drop "About" first on tiny screens */
+  /* --- Mobile disclosure toggle (hidden on wider screens) ------------- */
+  .nav__toggle {
+    display: none;
+    appearance: none;
+    background: none;
+    border: 0;
+    padding: 0.4rem;
+    margin: -0.4rem;
+    cursor: pointer;
+    color: var(--ink);
+    align-self: center;
+  }
+  .nav__toggle-bars {
+    display: block;
+    width: 22px;
+    height: 14px;
+    position: relative;
+  }
+  .nav__toggle-bars i {
+    position: absolute;
+    left: 0;
+    width: 100%;
+    height: 1.5px;
+    background: currentColor;
+    transition: transform var(--dur-fast) var(--ease-physical),
+                opacity var(--dur-fast) var(--ease-physical);
+  }
+  .nav__toggle-bars i:nth-child(1) { top: 2px; }
+  .nav__toggle-bars i:nth-child(2) { bottom: 2px; }
+  /* open → bars cross into an X */
+  .nav__toggle[aria-expanded="true"] .nav__toggle-bars i:nth-child(1) {
+    transform: translateY(5px) rotate(45deg);
+  }
+  .nav__toggle[aria-expanded="true"] .nav__toggle-bars i:nth-child(2) {
+    transform: translateY(-5px) rotate(-45deg);
+  }
+
+  @media (max-width: 600px) {
+    .nav__toggle { display: block; }
+
+    /* the menu becomes a quiet panel that drops under the bar */
+    .nav__links {
+      position: absolute;
+      top: 100%;
+      left: 0;
+      right: 0;
+      flex-direction: column;
+      gap: 0;
+      background: color-mix(in srgb, var(--paper) 96%, transparent);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      border-bottom: 1px solid var(--hairline);
+      padding: var(--space-2xs) var(--gutter) var(--space-s);
+      /* collapsed by default — animate open via grid-rows trick */
+      display: grid;
+      grid-template-rows: 0fr;
+      opacity: 0;
+      pointer-events: none;
+      transition: grid-template-rows var(--dur-fast) var(--ease-physical),
+                  opacity var(--dur-fast) var(--ease-physical);
+    }
+    .nav__links > * { overflow: hidden; }
+    .nav[data-menu-open] .nav__links {
+      grid-template-rows: 1fr;
+      opacity: 1;
+      pointer-events: auto;
+    }
+    .nav__link {
+      padding-block: var(--space-s);
+      border-bottom: 1px solid var(--hairline);
+    }
+    .nav__link:last-child { border-bottom: 0; }
+    .nav__link::after { display: none; } /* no sliding underline in the panel */
+    .nav__link[aria-current="true"] { color: var(--ink-blue); }
   }
 </style>
 
 <script>
   function wireNav() {
     const nav = document.querySelector<HTMLElement>("[data-nav]");
-    if (!nav) return;
+    if (!nav || nav.dataset.wired !== undefined) return;
+    nav.dataset.wired = "";
+
+    // --- hairline-on-scroll ---------------------------------------------
     const onScroll = () => {
       if (window.scrollY > 24) nav.setAttribute("data-scrolled", "");
       else nav.removeAttribute("data-scrolled");
     };
     onScroll();
     window.addEventListener("scroll", onScroll, { passive: true });
+
+    // --- mobile disclosure menu -----------------------------------------
+    const toggle = nav.querySelector<HTMLButtonElement>("[data-nav-toggle]");
+    const closeMenu = () => {
+      nav.removeAttribute("data-menu-open");
+      toggle?.setAttribute("aria-expanded", "false");
+      toggle?.setAttribute("aria-label", "Open menu");
+    };
+    const openMenu = () => {
+      nav.setAttribute("data-menu-open", "");
+      toggle?.setAttribute("aria-expanded", "true");
+      toggle?.setAttribute("aria-label", "Close menu");
+    };
+    toggle?.addEventListener("click", () => {
+      if (nav.hasAttribute("data-menu-open")) closeMenu();
+      else openMenu();
+    });
+    // close on link tap, on Escape, and when leaving mobile width
+    nav.querySelectorAll(".nav__link").forEach((a) =>
+      a.addEventListener("click", closeMenu)
+    );
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "Escape") closeMenu();
+    });
+    window.matchMedia("(min-width: 601px)").addEventListener("change", (e) => {
+      if (e.matches) closeMenu();
+    });
+
+    // --- active-section underline (home page only) ----------------------
+    const links = new Map<string, HTMLElement>();
+    nav.querySelectorAll<HTMLElement>("[data-nav-link]").forEach((el) => {
+      const id = el.dataset.navLink;
+      if (id) links.set(id, el);
+    });
+
+    const sections = ["work", "about", "blog", "contact"]
+      .map((id) => document.getElementById(id))
+      .filter((el): el is HTMLElement => el !== null);
+
+    if (sections.length) {
+      const clearCurrent = () =>
+        links.forEach((el) => el.removeAttribute("aria-current"));
+      const setCurrent = (id: string) => {
+        clearCurrent();
+        links.get(id)?.setAttribute("aria-current", "true");
+      };
+
+      // track which sections are in view; the topmost visible one wins
+      const visible = new Set<string>();
+      const io = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((entry) => {
+            const id = entry.target.id;
+            if (entry.isIntersecting) visible.add(id);
+            else visible.delete(id);
+          });
+          // pick the first section (document order) currently visible
+          const order = ["work", "about", "blog", "contact"];
+          const current = order.find((id) => visible.has(id));
+          if (current) setCurrent(current);
+          else clearCurrent(); // hero / above the first section
+        },
+        { rootMargin: "-45% 0px -45% 0px" } // a thin band through the middle
+      );
+      sections.forEach((s) => io.observe(s));
+    }
   }
   wireNav();
   document.addEventListener("astro:page-load", wireNav);
