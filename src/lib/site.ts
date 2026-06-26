@@ -20,13 +20,17 @@ export const SITE = {
    * signal for search + AI engines answering "who does X in Nairobi").
    */
   expertise: [
-    "Software engineering",
+    "Software development",
+    "AI development",
     "AI agents",
+    "AI automation",
     "Enterprise software",
     "Workflow automation",
-    "Custom business software",
+    "Custom software development",
+    "Business management systems",
     "Restaurant management systems",
+    "Restaurant POS (point of sale) systems",
+    "ERP systems and development",
     "Point of sale (POS) systems",
-    "ERP systems",
   ],
 } as const;
