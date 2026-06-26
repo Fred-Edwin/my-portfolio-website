@@ -17,6 +17,15 @@ const next = idx < posts.length - 1 ? posts[idx + 1] : null;
 
 const postUrl = `https://edwinfredkamau.co.ke/blog/${post.slug}`;
 
+// Full prose, in reading order — gives AI engines the article as text and
+// lets Google compute an honest word count.
+const articleBody = [
+  post.lead,
+  ...post.body,
+  `${post.quote.lead}${post.quote.word}${post.quote.trail}`,
+  ...post.bodyAfter,
+].join("\n\n");
+
 const blogPostingSchema = {
   "@context": "https://schema.org",
   "@type": "BlogPosting",
@@ -36,7 +45,17 @@ const blogPostingSchema = {
   },
   url: postUrl,
   mainEntityOfPage: postUrl,
+  image: "https://edwinfredkamau.co.ke/og-image.png",
+  inLanguage: "en",
+  articleSection: post.tag,
+  isPartOf: {
+    "@type": "Blog",
+    name: SERIES,
+    url: "https://edwinfredkamau.co.ke/blog",
+  },
   keywords: post.tag,
+  wordCount: articleBody.split(/\s+/).length,
+  articleBody,
   timeRequired: `PT${post.readMins}M`,
 };
 

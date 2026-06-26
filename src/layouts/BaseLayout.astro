@@ -43,11 +43,14 @@ const schemaJson = schema ? JSON.stringify(Array.isArray(schema) ? schema : [sch
     <link rel="canonical" href={canonical} />
     <title>{title}</title>
     <meta name="description" content={description} />
+    <meta name="author" content={SITE.name} />
+    <meta name="theme-color" content="#f6f2e9" />
     <meta name="generator" content={Astro.generator} />
     <meta name="google-site-verification" content="53yHXialSwH-4rGQVjO8zOWRyTiON20cMeMwmQppJrs" />
 
     <!-- Open Graph -->
     <meta property="og:type" content="website" />
+    <meta property="og:locale" content="en_KE" />
     <meta property="og:site_name" content={SITE.name} />
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />

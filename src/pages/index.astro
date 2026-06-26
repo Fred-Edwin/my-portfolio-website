@@ -9,32 +9,97 @@ import Contact from "../components/sections/Contact.astro";
 import Hairline from "../components/Hairline.astro";
 import { SITE } from "../lib/site";
 
-const personSchema = {
-  "@context": "https://schema.org",
-  "@type": "Person",
-  name: SITE.name,
-  jobTitle: SITE.role,
-  description: SITE.tagline,
-  url: "https://edwinfredkamau.co.ke",
-  image: "https://edwinfredkamau.co.ke/og-image.png",
-  email: SITE.email,
+// One linked graph: WebSite → Person → Organization, plus the two flagship
+// products as CreativeWorks the Person created. Cross-referenced by @id so
+// search engines and AI models resolve them as one entity, not loose nodes.
+const SITE_URL = "https://edwinfredkamau.co.ke";
+const PERSON_ID = `${SITE_URL}/#person`;
+const ORG_ID = `${SITE.company.url}#organization`;
+
+const orgSchema = {
+  "@type": "Organization",
+  "@id": ORG_ID,
+  name: SITE.company.name,
+  url: SITE.company.url,
+  founder: { "@id": PERSON_ID },
+  areaServed: "East Africa",
   address: {
     "@type": "PostalAddress",
     addressLocality: "Nairobi",
     addressCountry: "KE",
   },
-  worksFor: {
-    "@type": "Organization",
-    name: "Lobster Technologies",
+};
+
+const personSchema = {
+  "@type": "Person",
+  "@id": PERSON_ID,
+  name: SITE.name,
+  jobTitle: SITE.role,
+  description: SITE.tagline,
+  url: SITE_URL,
+  image: `${SITE_URL}/og-image.png`,
+  email: SITE.email,
+  telephone: SITE.phone,
+  knowsAbout: [...SITE.expertise],
+  knowsLanguage: ["en", "sw"],
+  address: {
+    "@type": "PostalAddress",
+    addressLocality: "Nairobi",
+    addressCountry: "KE",
   },
-  sameAs: [SITE.linkedin, SITE.x, SITE.github],
+  worksFor: { "@id": ORG_ID },
+  founder: { "@id": ORG_ID },
+  sameAs: [SITE.linkedin, SITE.x, SITE.github, SITE.company.url],
+};
+
+const websiteSchema = {
+  "@type": "WebSite",
+  "@id": `${SITE_URL}/#website`,
+  url: SITE_URL,
+  name: `${SITE.name} — ${SITE.role}`,
+  description: SITE.tagline,
+  inLanguage: "en",
+  author: { "@id": PERSON_ID },
+  publisher: { "@id": PERSON_ID },
+};
+
+// The flagship systems, marked up so an AI summarising "what has Edwinfred
+// built" reads them as concrete works, not inferred prose.
+const projectSchemas = [
+  {
+    "@type": "SoftwareApplication",
+    name: "Wendo Coffee & Bistro — restaurant management system",
+    applicationCategory: "BusinessApplication",
+    operatingSystem: "Web, Android, iOS",
+    description:
+      "A restaurant management system running the floor, kitchen, and books across every branch as one — real-time order routing, GPS staff clock-in, live branch dashboards, payments, credit accounts, HR, and reporting.",
+    creator: { "@id": PERSON_ID },
+    author: { "@id": PERSON_ID },
+    areaServed: "Kenya",
+  },
+  {
+    "@type": "SoftwareApplication",
+    name: "Washan Groceries — mobile wholesale management system",
+    applicationCategory: "BusinessApplication",
+    operatingSystem: "Web, Android, iOS",
+    description:
+      "A mobile-first system for a grocery wholesaler: per-client pricing, a running credit ledger, stock across locations, and branded PDF invoices — the whole business in the owner's pocket.",
+    creator: { "@id": PERSON_ID },
+    author: { "@id": PERSON_ID },
+    areaServed: "Kenya",
+  },
+];
+
+const schema = {
+  "@context": "https://schema.org",
+  "@graph": [websiteSchema, personSchema, orgSchema, ...projectSchemas],
 };
 ---
 
 <BaseLayout
   title={`${SITE.name} — Software & AI Engineer in Nairobi, Kenya`}
-  description={SITE.tagline}
-  schema={personSchema}
+  description="Edwinfred Kamau builds enterprise software and AI agents for growing businesses across East Africa — restaurant systems, POS, ERP, and workflow automation, built on-site in Nairobi, Kenya."
+  schema={schema}
 >
   <Hero />
 
